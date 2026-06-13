@@ -1,0 +1,18 @@
+import './globals.css';
+
+export const metadata = {
+  title: 'Tamboon Garden',
+  description: 'ระบบจัดการบริษัทแต้มบุญการ์เด้น',
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="th">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body style={{ margin: 0, padding: 0 }}>{children}</body>
+    </html>
+  );
+}
