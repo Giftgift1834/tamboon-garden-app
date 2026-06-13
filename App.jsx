@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AreaChart,
   Area,
@@ -1851,6 +1851,9 @@ const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
 const CRMProjectExplorer = () => {
   const [projects, setProjects] = useState(projectsData);
   const [selectedId, setSelectedId] = useState(projectsData[0].id);
+  useEffect(() => {
+    fetch('/api/sheets/projects').then(r => r.ok ? r.json() : null).then(d => { if (Array.isArray(d) && d.length) { setProjects(d.map(p => ({ ...p, value: Number(p.value) || 0 }))); setSelectedId(d[0].id); } }).catch(() => {});
+  }, []);
   const [entity, setEntity] = useState(projectsData[0].entity);
   const [activeDetailTab, setActiveDetailTab] = useState('entity');
 
@@ -1864,7 +1867,12 @@ const CRMProjectExplorer = () => {
   };
 
   const updateProject = (field, value) => {
-    setProjects((prev) => prev.map((p) => (p.id === selectedId ? { ...p, [field]: value } : p)));
+    setProjects((prev) => {
+      const updated = prev.map((p) => (p.id === selectedId ? { ...p, [field]: value } : p));
+      const proj = updated.find(p => p.id === selectedId);
+      if (proj) fetch('/api/sheets/projects', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(proj) }).catch(() => {});
+      return updated;
+    });
   };
 
   const handleNewProject = () => {
@@ -1883,6 +1891,7 @@ const CRMProjectExplorer = () => {
       entity: 'entity1',
     };
     setProjects((prev) => [newProject, ...prev]);
+    fetch('/api/sheets/projects', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newProject) }).catch(() => {});
     setSelectedId(newId);
     setEntity('entity1');
     setActiveDetailTab('customer');
@@ -2028,6 +2037,9 @@ const CRMProjectExplorer = () => {
 const DocumentFlow = ({ paidDocIds, togglePaid }) => {
   const [documents, setDocuments] = useState(documentsData);
   const [selectedProjectId, setSelectedProjectId] = useState(documentsData[0].projectId);
+  useEffect(() => {
+    fetch('/api/sheets/documents').then(r => r.ok ? r.json() : null).then(d => { if (Array.isArray(d) && d.length) { setDocuments(d.map(doc => ({ ...doc, base: Number(doc.base) || 0 }))); setSelectedProjectId(d[0].projectId); setSelectedDocId(d[0].id); setViewStage(d[0].currentStage); } }).catch(() => {});
+  }, []);
   const [selectedDocId, setSelectedDocId] = useState(documentsData[0].id);
   const [viewStage, setViewStage] = useState(documentsData[0].currentStage);
   const [formStates, setFormStates] = useState(() => {
@@ -2140,6 +2152,7 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
       payMethod: '',
     };
     setDocuments((prev) => [...prev, newDoc]);
+    fetch('/api/sheets/documents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newDoc) }).catch(() => {});
     setSelectedDocId(newId);
     setFormStates((prev) => ({
       ...prev,
@@ -2191,6 +2204,7 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
       payMethod: '',
     };
     setDocuments((prev) => [...prev, newDoc]);
+    fetch('/api/sheets/documents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newDoc) }).catch(() => {});
     setFormStates((prev) => ({
       ...prev,
       [`${newId}__${stageKey}`]: {
@@ -2578,6 +2592,9 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
 const HREmployeeCard = () => {
   const [employees, setEmployees] = useState(employeesData);
   const [selectedId, setSelectedId] = useState(employeesData[0].id);
+  useEffect(() => {
+    fetch('/api/sheets/employees').then(r => r.ok ? r.json() : null).then(d => { if (Array.isArray(d) && d.length) { setEmployees(d); setSelectedId(d[0].id); } }).catch(() => {});
+  }, []);
   const [siteFilter, setSiteFilter] = useState('all');
   const [cardEntity, setCardEntity] = useState('entity1');
   const [customCompanyName, setCustomCompanyName] = useState('');
@@ -2641,7 +2658,9 @@ const HREmployeeCard = () => {
     if (!newEmployee.name.trim()) return;
     const n = employees.length + 15;
     const id = `EMP-2026-${String(n).padStart(3, '0')}`;
-    setEmployees((prev) => [...prev, { ...newEmployee, id }]);
+    const savedEmployee = { ...newEmployee, id };
+    setEmployees((prev) => [...prev, savedEmployee]);
+    fetch('/api/sheets/employees', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(savedEmployee) }).catch(() => {});
     setEmployeeWages((prev) => ({ ...prev, [id]: Number(newEmployee.wage) || 450 }));
     setNewEmployee(blankEmployee);
     setShowAddEmployee(false);
@@ -2655,7 +2674,12 @@ const HREmployeeCard = () => {
   };
 
   const updateEmployeeStatus = (id, status) => {
-    setEmployees((prev) => prev.map((e) => (e.id === id ? { ...e, status } : e)));
+    setEmployees((prev) => {
+      const updated = prev.map((e) => (e.id === id ? { ...e, status } : e));
+      const emp = updated.find(e => e.id === id);
+      if (emp) fetch('/api/sheets/employees', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(emp) }).catch(() => {});
+      return updated;
+    });
     setDetailEmployee((prev) => (prev && prev.id === id ? { ...prev, status } : prev));
   };
 
@@ -3412,7 +3436,10 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
           )}
 
           <button
-            onClick={() => setSaved(true)}
+            onClick={() => {
+              setSaved(true);
+              fetch('/api/sheets/materials', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: `MAT-${Date.now()}`, projectId, logDate, recorder, description, materials }) }).catch(() => {});
+            }}
             className="tg-focus tg-navbtn w-full px-4 py-3 rounded-xl text-sm font-medium"
             style={{ background: 'var(--sage-soft)', border: '1px solid rgba(217,142,92,0.25)', color: 'var(--sage)' }}
           >
