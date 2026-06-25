@@ -1701,11 +1701,11 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ที่อยู่</span><span style={{ color: 'var(--bone)' }}>{project.address}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>TaxID</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{project.taxId}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>โครงการ</span><span style={{ color: 'var(--bone)' }}>{doc.projectName}</span></div>
-            {project.contact && <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ผู้ติดต่อ</span><span style={{ color: 'var(--bone)' }}>{project.contact}</span></div>}
           </div>
           <div className="tg-doc-right">
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>เลขที่</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.docNo}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>วันที่</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{fmtDate(formData.docDate)}</span></div>
+            {project.contact && <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ผู้ติดต่อ</span><span style={{ color: 'var(--bone)' }}>{project.contact}</span></div>}
             {stage === 'quotation' && (
               <>
                 <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ยืนราคา</span><span style={{ color: 'var(--bone)' }}>{formData.validity}</span></div>
