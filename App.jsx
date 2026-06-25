@@ -2637,12 +2637,15 @@ const CRMProjectExplorer = () => {
 /* ============================================================
    PAGE 3 — SEAMLESS DOCUMENT FLOW
    ============================================================ */
-const DocumentFlow = ({ paidDocIds, togglePaid }) => {
+const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded }) => {
   const [documents, setDocuments] = useState(documentsData);
 
   useEffect(() => {
     const load = () => apiFetch('/api/sheets/documents').then((data) => {
-      if (data && data.length > 0) setDocuments(data);
+      if (data && data.length > 0) {
+        setDocuments(data);
+        if (onDocsLoaded) onDocsLoaded(data);
+      }
     }).catch(() => {});
     load();
     const timer = setInterval(load, 60000);
@@ -4821,17 +4824,29 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
 export default function App() {
   const [page, setPage] = useState('dashboard');
   const [paidDocIds, setPaidDocIds] = useState([]);
+  const [sheetsDocs, setSheetsDocs]   = useState([]);
   const [directCosts, setDirectCosts] = useState({});
 
   const setProjectDirectCost = (projectId, total) => {
     setDirectCosts((prev) => ({ ...prev, [projectId]: total }));
   };
 
-  const togglePaid = (docId, paid) => {
-    setPaidDocIds((prev) => (paid ? Array.from(new Set([...prev, docId])) : prev.filter((id) => id !== docId)));
+  const handleDocsLoaded = (docs) => {
+    setSheetsDocs(docs);
+    setPaidDocIds(docs.filter((d) => d.paidAt).map((d) => d.id));
   };
 
-  const extraRevenue = documentsData
+  const togglePaid = (docId, paid) => {
+    setPaidDocIds((prev) => (paid ? Array.from(new Set([...prev, docId])) : prev.filter((id) => id !== docId)));
+    const doc = sheetsDocs.find((d) => d.id === docId);
+    if (doc) {
+      const now = new Date();
+      const paidAt = paid ? `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear() + 543}` : '';
+      apiFetch('/api/sheets/documents', 'PUT', { ...doc, paidAt }).catch(() => {});
+    }
+  };
+
+  const extraRevenue = (sheetsDocs.length > 0 ? sheetsDocs : documentsData)
     .filter((d) => paidDocIds.includes(d.id))
     .reduce((s, d) => s + calcDocAmounts(d.base).net, 0);
 
@@ -4848,7 +4863,7 @@ export default function App() {
           <CRMProjectExplorer />
         </div>
         <div style={{ display: page === 'docflow' ? 'block' : 'none' }}>
-          <DocumentFlow paidDocIds={paidDocIds} togglePaid={togglePaid} />
+          <DocumentFlow paidDocIds={paidDocIds} togglePaid={togglePaid} onDocsLoaded={handleDocsLoaded} />
         </div>
         <div style={{ display: page === 'hr' ? 'block' : 'none' }}>
           <HREmployeeCard />
