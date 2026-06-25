@@ -3238,19 +3238,27 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
               <button
                 onClick={() => {
                   const docNo = (formStates[formKey] || {}).docNo || 'DOC';
-                  const area = document.querySelector('.tg-photo-print-area');
-                  if (!area) return;
+                  const photos = docPhotos[selectedDocId] || [];
+                  if (photos.length === 0) return;
+                  const PER_PAGE = 8;
+                  const totalPages = Math.ceil(photos.length / PER_PAGE);
+                  let pagesHtml = '';
+                  for (let pi = 0; pi < totalPages; pi++) {
+                    const pg = photos.slice(pi * PER_PAGE, (pi + 1) * PER_PAGE);
+                    while (pg.length < PER_PAGE) pg.push(null);
+                    const cells = pg.map((p, i) => {
+                      const n = pi * PER_PAGE + i + 1;
+                      if (!p) return `<div style="aspect-ratio:4/3;border:1px dashed #ddd;display:flex;align-items:center;justify-content:center;font-size:10px;color:#aaa">ช่องที่ ${n}</div>`;
+                      const pos = (docPhotoPos || {})[p.id] || { x: 50, y: 50 };
+                      const zm = (docPhotoZoom || {})[p.id] || 1;
+                      return `<div style="border:1px solid #ccc;border-radius:4px;overflow:hidden"><div style="aspect-ratio:4/3;position:relative;overflow:hidden"><img src="${p.url}" style="width:100%;height:100%;object-fit:cover;object-position:${pos.x}% ${pos.y}%;transform:scale(${zm});transform-origin:${pos.x}% ${pos.y}%;display:block"/><span style="position:absolute;top:4px;left:4px;font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(0,0,0,0.55);color:#fff;font-weight:700">${n}</span></div><p style="font-size:11px;padding:3px 6px;color:#444;min-height:1.4rem">${p.caption || ''}</p></div>`;
+                    }).join('');
+                    pagesHtml += `<div style="${pi > 0 ? 'break-before:page;page-break-before:always;' : ''}"><div style="border-bottom:1.5px solid #333;padding-bottom:8px;margin-bottom:12px;font-size:12px;display:flex;justify-content:space-between;align-items:center"><strong>ภาพถ่ายหน้างาน</strong><span>หน้า ${pi + 1}/${totalPages}</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${cells}</div></div>`;
+                  }
                   const w = window.open('', '_blank', 'width=900,height=700');
-                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>ภาพถ่ายหน้างาน_${docNo}</title>
-                  <style>
-                    @page { size: A4; margin: 10mm; }
-                    * { box-sizing: border-box; margin: 0; padding: 0; }
-                    body { font-family: sans-serif; background: #fff; }
-                    img { max-width: 100%; height: auto; display: block; }
-                    .tg-noprint { display: none !important; }
-                  </style></head><body>${area.innerHTML}</body></html>`);
+                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>ภาพถ่ายหน้างาน_${docNo}</title><style>@page{size:A4;margin:10mm}html,body{height:auto}*{box-sizing:border-box;margin:0;padding:0}body{font-family:sans-serif;background:#fff}</style></head><body>${pagesHtml}</body></html>`);
                   w.document.close();
-                  setTimeout(() => { w.focus(); w.print(); w.close(); }, 800);
+                  w.onload = () => { w.focus(); w.print(); };
                 }}
                 className="tg-focus tg-navbtn flex items-center justify-center gap-2 w-full mt-4 px-4 py-3 rounded-xl text-sm font-medium"
                 style={{ background: 'var(--sage)', color: '#fff' }}
