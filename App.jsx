@@ -1912,11 +1912,11 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
                 .tg-doc-copy { break-before: page; page-break-before: always; border-top: none !important; margin-top: 0 !important; padding-top: 0 !important; }
                 .tg-sig-area { margin-top: auto !important; }
                 .tg-noprint { display: none !important; }
-                /* Document info grid — must match App.jsx lines 159-163 */
-                .tg-doc-info { display: flex; gap: 0 1.5rem; margin-bottom: 1.25rem; font-size: 0.875rem; }
-                .tg-doc-left { width: 66%; }
-                .tg-doc-right { width: calc(34% - 1.5rem); }
-                .tg-doc-row { display: grid; grid-template-columns: 68px 1fr; gap: 0.5rem; padding: 0.1rem 0; align-items: baseline; }
+                /* Document info grid */
+                .tg-doc-info { display: flex !important; gap: 0 1.5rem; margin-bottom: 1.25rem; font-size: 0.875rem; }
+                .tg-doc-left { display: block !important; width: 66%; }
+                .tg-doc-right { display: block !important; width: calc(34% - 1.5rem); }
+                .tg-doc-row { display: grid !important; grid-template-columns: 68px 1fr; gap: 0.5rem; padding: 0.1rem 0; align-items: baseline; }
                 .tg-doc-right .tg-doc-row { grid-template-columns: 72px 1fr; }
               </style></head><body>${area.innerHTML}</body></html>`);
               w.document.close();
