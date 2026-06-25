@@ -1634,7 +1634,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
     <div className="tg-modal-backdrop">
       <div className="tg-panel tg-print-area tg-scroll" style={{ maxWidth: 760, width: '100%', margin: '0.5rem 0', maxHeight: '94vh', overflowY: 'auto', padding: '36px 40px', background: '#fff' }}>
         {copies.map((label, idx) => (
-        <div key={idx} className={idx > 0 ? 'tg-doc-copy' : ''} style={idx > 0 ? { borderTop: '2px dashed var(--line-strong)', marginTop: 24, paddingTop: 24 } : undefined}>
+        <div key={idx} className={idx > 0 ? 'tg-doc-copy' : ''} style={{ display: 'flex', flexDirection: 'column', ...(idx > 0 ? { borderTop: '2px dashed var(--line-strong)', marginTop: 24, paddingTop: 24 } : undefined) }}>
         {/* Header */}
         <div className="flex items-start justify-between gap-4 pb-4" style={{ borderBottom: '2px solid var(--bone)' }}>
           <div className="flex items-start gap-3">
@@ -1794,7 +1794,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
 
         {/* Signatures */}
         {stage === 'receipt' ? (
-          <div className="grid grid-cols-3 gap-6 mt-10 text-center text-xs" style={{ color: 'var(--moss)' }}>
+          <div className="grid grid-cols-3 gap-6 text-center text-xs" style={{ color: 'var(--moss)', marginTop: '15mm', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
             <div>
               <div className="flex justify-center mb-1" style={{ height: 32 }}>
                 {stage === 'quotation' && <SignatureMark style={{ height: '100%', width: 'auto' }} />}
@@ -1814,7 +1814,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-10 mt-10 text-center text-xs" style={{ color: 'var(--moss)' }}>
+          <div className="grid grid-cols-2 gap-10 text-center text-xs" style={{ color: 'var(--moss)', marginTop: '15mm', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
             <div>
               <div className="flex justify-center mb-1" style={{ height: 32 }}>
                 {stage === 'quotation' && <SignatureMark style={{ height: '100%', width: 'auto' }} />}
@@ -1839,7 +1839,28 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
             ปิด
           </button>
           <button
-            onClick={() => window.print()}
+            onClick={() => {
+              const area = document.querySelector('.tg-print-area');
+              if (!area) { window.print(); return; }
+              const w = window.open('', '_blank', 'width=900,height=700');
+              w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>เอกสาร</title>
+              <style>
+                @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+                @page { size: A4; margin: 15mm 20mm; }
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+                body { font-family: 'Sarabun', sans-serif; font-size: 13px; color: #3d2c1e; background: #fff; }
+                table { border-collapse: collapse; width: 100%; }
+                th, td { border: 1px solid #ddd; padding: 6px 8px; }
+                th { background: #f5f0eb; font-weight: 600; }
+                .tg-mono { font-family: 'Courier New', monospace; }
+                .tg-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-weight: 700; }
+                .tg-badge-sage { background: #e8f0e8; color: #4a7a5a; }
+                .tg-doc-copy { page-break-before: always; border-top: none !important; margin-top: 0 !important; padding-top: 0 !important; }
+                .tg-noprint { display: none !important; }
+              </style></head><body>${area.innerHTML}</body></html>`);
+              w.document.close();
+              setTimeout(() => { w.focus(); w.print(); w.close(); }, 500);
+            }}
             className="tg-focus tg-navbtn flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium"
             style={{ background: 'var(--sage)', color: '#fff' }}
           >
@@ -3174,6 +3195,7 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
               </div>
               <button onClick={() => setShowDocPhotoReport(false)} className="tg-focus tg-navbtn px-3 py-2 rounded-lg text-sm" style={{ border: '1px solid var(--line)', color: 'var(--moss)' }}>ปิด</button>
             </div>
+            <div className="tg-photo-print-area">
             <PhotoGalleryUploader
               photos={docPhotos[selectedDocId] || []}
               onChange={(p) => setDocPhotos((prev) => ({ ...prev, [selectedDocId]: p }))}
@@ -3182,14 +3204,24 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
               photoZoom={docPhotoZoom}
               onPhotoZoomChange={setDocPhotoZoom}
             />
+            </div>
             {(docPhotos[selectedDocId] || []).length > 0 && (
               <button
                 onClick={() => {
                   const docNo = (formStates[formKey] || {}).docNo || 'DOC';
-                  const prevTitle = document.title;
-                  document.title = `ภาพถ่ายหน้างาน_${docNo}`;
-                  window.print();
-                  setTimeout(() => { document.title = prevTitle; }, 1000);
+                  const area = document.querySelector('.tg-photo-print-area');
+                  if (!area) return;
+                  const w = window.open('', '_blank', 'width=900,height=700');
+                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>ภาพถ่ายหน้างาน_${docNo}</title>
+                  <style>
+                    @page { size: A4; margin: 10mm; }
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                    body { font-family: sans-serif; background: #fff; }
+                    img { max-width: 100%; height: auto; display: block; }
+                    .tg-noprint { display: none !important; }
+                  </style></head><body>${area.innerHTML}</body></html>`);
+                  w.document.close();
+                  setTimeout(() => { w.focus(); w.print(); w.close(); }, 800);
                 }}
                 className="tg-focus tg-navbtn flex items-center justify-center gap-2 w-full mt-4 px-4 py-3 rounded-xl text-sm font-medium"
                 style={{ background: 'var(--sage)', color: '#fff' }}
