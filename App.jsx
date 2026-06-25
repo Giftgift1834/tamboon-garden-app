@@ -3198,7 +3198,6 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
           </div>
         </div>
       )}
-      )}
     </div>
   );
 };
