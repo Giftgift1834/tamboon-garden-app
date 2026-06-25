@@ -2061,28 +2061,54 @@ const MobileNav = ({ page, setPage }) => (
 /* ============================================================
    PAGE 1 — EXECUTIVE DASHBOARD
    ============================================================ */
-const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
+const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {}, sheetsDocs = [], sheetsProjects = [] }) => {
   const [companyFilter, setCompanyFilter] = useState('all');
   const [activeTab, setActiveTab] = useState('alerts');
   const adjustedYtd = ytdRevenue + extraRevenue / 1000000;
 
+  const liveProjects = sheetsProjects.length > 0 ? sheetsProjects : projectsData;
+
+  // Compute live outstanding from sheetsDocs (unpaid billing docs)
+  const liveOutstanding = (() => {
+    const today = new Date();
+    const groups = {};
+    const docs = sheetsDocs.length > 0 ? sheetsDocs : [];
+    docs.forEach((d) => {
+      if (d.paidAt) return;
+      const billingNo = d.docNos?.billing;
+      if (!billingNo) return;
+      const due = parseThDate(d.dueDate);
+      let status = 'pending';
+      if (due) {
+        const diff = Math.floor((due - today) / 86400000);
+        if (diff < 0) status = 'overdue';
+        else if (diff <= 7) status = 'due_soon';
+      }
+      if (!groups[d.projectId]) groups[d.projectId] = { projectId: d.projectId, projectName: d.projectName, items: [] };
+      groups[d.projectId].items.push({ doc: billingNo, issued: d.docDates?.billing || '', due: d.dueDate || '', amount: Number(d.base) || 0, status });
+    });
+    return Object.values(groups);
+  })();
+
+  const activeOutstanding = liveOutstanding.length > 0 ? liveOutstanding : outstandingByProject;
+
   // Projects for selected company
   const companyProjects = companyFilter === 'all'
-    ? projectsData
-    : projectsData.filter((p) => (p.customer || 'ไม่ระบุ') === companyFilter);
+    ? liveProjects
+    : liveProjects.filter((p) => (p.customer || 'ไม่ระบุ') === companyFilter);
 
   const companyProjectIds = companyProjects.map((p) => p.id);
-  const filteredOutstanding = outstandingByProject.filter((g) =>
+  const filteredOutstanding = activeOutstanding.filter((g) =>
     companyFilter === 'all' || companyProjectIds.includes(g.projectId)
   );
   const filteredTotal = filteredOutstanding.reduce((sum, g) => sum + g.items.reduce((s, i) => s + i.amount, 0), 0);
   const filteredDocs = filteredOutstanding.reduce((sum, g) => sum + g.items.length, 0);
   const filteredOverdue = filteredOutstanding.reduce((sum, g) => sum + g.items.filter((i) => i.status === 'overdue').length, 0);
-  const totalCompanyValue = companyProjects.reduce((s, p) => s + (p.value || 0), 0);
+  const totalCompanyValue = companyProjects.reduce((s, p) => s + (Number(p.value) || 0), 0);
   const totalDirectCost = companyProjects.reduce((s, p) => s + (directCosts[p.id] || 0), 0);
 
   // All unique company names for dropdown
-  const allCompanies = [...new Set(projectsData.map((p) => p.customer || 'ไม่ระบุ'))];
+  const allCompanies = [...new Set(liveProjects.map((p) => p.customer || 'ไม่ระบุ'))];
 
   return (
   <div className="relative p-6 md:p-10 max-w-7xl mx-auto">
@@ -2349,7 +2375,7 @@ const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
 /* ============================================================
    PAGE 2 — CRM & PROJECT EXPLORER
    ============================================================ */
-const CRMProjectExplorer = () => {
+const CRMProjectExplorer = ({ onProjectsLoaded }) => {
   const blank = { id: 'PRJ-NEW-001', name: '', customer: '', contact: '', taxId: '', value: 0, address: '', status: 'active', start: '11/06/2026', entity: 'entity1' };
   const [projects, setProjects] = useState([blank, ...projectsData]);
   const [selectedId, setSelectedId] = useState('PRJ-NEW-001');
@@ -2360,7 +2386,10 @@ const CRMProjectExplorer = () => {
 
   useEffect(() => {
     const load = () => apiFetch('/api/sheets/projects').then((data) => {
-      if (data && data.length > 0) setProjects([blank, ...data]);
+      if (data && data.length > 0) {
+        setProjects([blank, ...data]);
+        if (onProjectsLoaded) onProjectsLoaded(data);
+      }
     }).catch(() => {});
     load();
     const timer = setInterval(load, 60000);
@@ -2388,7 +2417,12 @@ const CRMProjectExplorer = () => {
     if (!p) return;
     try {
       if (selectedId.startsWith('PRJ-NEW')) {
-        const newId = `PRJ-${Date.now()}`;
+        const nums = projects
+          .map((pr) => pr.id)
+          .filter((id) => /^PRJ-\d+$/.test(id))
+          .map((id) => parseInt(id.replace('PRJ-', ''), 10));
+        const next = nums.length > 0 ? Math.max(...nums) + 1 : 1;
+        const newId = `PRJ-${String(next).padStart(3, '0')}`;
         const saved = { ...p, id: newId };
         await apiFetch('/api/sheets/projects', 'POST', saved);
         setProjects((prev) => prev.map((pr) => pr.id === selectedId ? saved : pr));
@@ -2637,7 +2671,7 @@ const CRMProjectExplorer = () => {
 /* ============================================================
    PAGE 3 — SEAMLESS DOCUMENT FLOW
    ============================================================ */
-const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded }) => {
+const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [] }) => {
   const [documents, setDocuments] = useState(documentsData);
 
   useEffect(() => {
@@ -2654,6 +2688,7 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded }) => {
   }, []);
   const [selectedProjectId, setSelectedProjectId] = useState(documentsData[0].projectId);
   const [selectedDocId, setSelectedDocId] = useState(documentsData[0].id);
+  const [docCompanyFilter, setDocCompanyFilter] = useState('all');
   const [viewStage, setViewStage] = useState(documentsData[0].currentStage);
   const [docPhotoPos, setDocPhotoPos] = useState({});
   const [docPhotoZoom, setDocPhotoZoom] = useState({});
@@ -2906,8 +2941,51 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded }) => {
           <h1 className="text-2xl md:text-3xl font-semibold" style={{ color: 'var(--bone)' }}>ระบบจัดการเอกสารแบบไร้รอยต่อ</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--moss)' }}>ใบเสนอราคา → ใบวางบิล → ใบกำกับภาษี → ใบเสร็จรับเงิน · พร้อมคำนวณภาษีอัตโนมัติ</p>
         </div>
-        <ProjectSearchSelect value={selectedProjectId} onChange={handleProjectSelect} items={projectsData} placeholder="ค้นหาโครงการ..." />
+        {/* Company dropdown */}
+        <div className="relative" style={{ minWidth: 220 }}>
+          <select
+            value={docCompanyFilter}
+            onChange={(e) => { setDocCompanyFilter(e.target.value); }}
+            className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2.5 text-sm"
+          >
+            <option value="all">ลูกค้าทั้งหมด</option>
+            {[...new Set((sheetsProjects.length > 0 ? sheetsProjects : projectsData).filter((p) => p.customer).map((p) => p.customer))].map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
+        </div>
       </div>
+
+      {/* Project cards row */}
+      {(() => {
+        const allProjects = sheetsProjects.length > 0 ? sheetsProjects : projectsData;
+        const visibleProjects = docCompanyFilter === 'all' ? allProjects : allProjects.filter((p) => p.customer === docCompanyFilter);
+        return visibleProjects.length > 0 ? (
+          <div className="flex gap-2.5 overflow-x-auto tg-scroll pb-1 mb-5" style={{ scrollbarWidth: 'thin' }}>
+            {visibleProjects.map((p) => {
+              const active = p.id === selectedProjectId;
+              const hasDocs = documents.some((d) => d.projectId === p.id);
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => handleProjectSelect(p.id)}
+                  className="tg-focus tg-navbtn flex-shrink-0 text-left px-3.5 py-2.5 rounded-xl"
+                  style={{
+                    minWidth: 160, maxWidth: 200,
+                    background: active ? 'var(--sage-soft)' : 'var(--panel)',
+                    border: `1px solid ${active ? 'rgba(217,142,92,0.35)' : 'var(--line)'}`,
+                  }}
+                >
+                  <p className="text-xs font-semibold truncate" style={{ color: active ? 'var(--sage)' : 'var(--bone)' }}>{p.name}</p>
+                  <p className="text-xs mt-0.5 tg-mono" style={{ color: 'var(--moss)' }}>{p.id}</p>
+                  {hasDocs && <p className="text-xs mt-0.5" style={{ color: 'var(--gold)' }}>มีเอกสาร</p>}
+                </button>
+              );
+            })}
+          </div>
+        ) : null;
+      })()}
 
       {doc ? (
       <div className="tg-split tg-15-85">
@@ -3160,14 +3238,14 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded }) => {
                     )}
                   </div>
 
-                  {/* Right: customer info — shifted right with a divider for clear separation */}
+                  {/* Right: customer info — order matches PDF header layout */}
                   <div className="space-y-4 lg:pl-8 lg:border-l" style={{ borderColor: 'var(--line)' }}>
                     <h3 className="text-sm font-semibold" style={{ color: 'var(--bone)' }}>ข้อมูลลูกค้า</h3>
-                    <FormField label="ชื่อลูกค้า (Customer_Name)" value={project.contact} icon={User} />
                     <FormField label="ชื่อบริษัท (Customer_Company)" value={project.customer} icon={Building2} />
+                    <FormField label="ที่อยู่ (Customer_Address)" value={project.address} icon={MapPin} area />
                     <FormField label="เลขผู้เสียภาษี (Customer_TaxID)" value={project.taxId} icon={Hash} mono />
                     <FormField label="โครงการ (Project_Name)" value={doc.projectName} icon={FolderKanban} />
-                    <FormField label="ที่อยู่ (Customer_Address)" value={project.address} icon={MapPin} area />
+                    <FormField label="ผู้ติดต่อ (Contact_Name)" value={project.contact} icon={User} />
                   </div>
                 </div>
               </div>
@@ -4831,9 +4909,10 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
    ============================================================ */
 export default function App() {
   const [page, setPage] = useState('dashboard');
-  const [paidDocIds, setPaidDocIds] = useState([]);
-  const [sheetsDocs, setSheetsDocs]   = useState([]);
-  const [directCosts, setDirectCosts] = useState({});
+  const [paidDocIds, setPaidDocIds]       = useState([]);
+  const [sheetsDocs, setSheetsDocs]       = useState([]);
+  const [sheetsProjects, setSheetsProjects] = useState([]);
+  const [directCosts, setDirectCosts]     = useState({});
 
   const setProjectDirectCost = (projectId, total) => {
     setDirectCosts((prev) => ({ ...prev, [projectId]: total }));
@@ -4845,17 +4924,16 @@ export default function App() {
   };
 
   const togglePaid = (docId, paid) => {
+    const now = new Date();
+    const paidAt = paid ? `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear() + 543}` : '';
     setPaidDocIds((prev) => (paid ? Array.from(new Set([...prev, docId])) : prev.filter((id) => id !== docId)));
+    setSheetsDocs((prev) => prev.map((d) => d.id === docId ? { ...d, paidAt } : d));
     const doc = sheetsDocs.find((d) => d.id === docId);
-    if (doc) {
-      const now = new Date();
-      const paidAt = paid ? `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear() + 543}` : '';
-      apiFetch('/api/sheets/documents', 'PUT', { ...doc, paidAt }).catch(() => {});
-    }
+    if (doc) apiFetch('/api/sheets/documents', 'PUT', { ...doc, paidAt }).catch(() => {});
   };
 
-  const extraRevenue = (sheetsDocs.length > 0 ? sheetsDocs : documentsData)
-    .filter((d) => paidDocIds.includes(d.id))
+  const extraRevenue = sheetsDocs
+    .filter((d) => d.paidAt)
     .reduce((s, d) => s + calcDocAmounts(d.base).net, 0);
 
   return (
@@ -4865,13 +4943,13 @@ export default function App() {
       <MobileNav page={page} setPage={setPage} />
       <main className="flex-1 min-w-0 pb-20 md:pb-0">
         <div style={{ display: page === 'dashboard' ? 'block' : 'none' }}>
-          <ExecutiveDashboard extraRevenue={extraRevenue} directCosts={directCosts} />
+          <ExecutiveDashboard extraRevenue={extraRevenue} directCosts={directCosts} sheetsDocs={sheetsDocs} sheetsProjects={sheetsProjects} />
         </div>
         <div style={{ display: page === 'crm' ? 'block' : 'none' }}>
-          <CRMProjectExplorer />
+          <CRMProjectExplorer onProjectsLoaded={(data) => setSheetsProjects(data)} />
         </div>
         <div style={{ display: page === 'docflow' ? 'block' : 'none' }}>
-          <DocumentFlow paidDocIds={paidDocIds} togglePaid={togglePaid} onDocsLoaded={handleDocsLoaded} />
+          <DocumentFlow paidDocIds={paidDocIds} togglePaid={togglePaid} onDocsLoaded={handleDocsLoaded} sheetsProjects={sheetsProjects} />
         </div>
         <div style={{ display: page === 'hr' ? 'block' : 'none' }}>
           <HREmployeeCard />
