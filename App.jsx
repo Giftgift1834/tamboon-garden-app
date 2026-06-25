@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AreaChart,
   Area,
@@ -278,6 +278,29 @@ const revenueData = [
   { month: 'พ.ย.', forecast: 4.95 },
   { month: 'ธ.ค.', forecast: 5.65 },
 ];
+
+/* ============================================================
+   API HELPERS — Sheets + Drive
+   ============================================================ */
+async function apiFetch(path, method = 'GET', body) {
+  const res = await fetch(path, {
+    method,
+    headers: method !== 'GET' ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function uploadToDrive(file, folder) {
+  const fd = new FormData();
+  fd.append('file', file);
+  if (folder) fd.append('folder', folder);
+  const res = await fetch('/api/drive/upload', { method: 'POST', body: fd });
+  if (!res.ok) throw new Error('Drive upload failed');
+  const data = await res.json();
+  return data.previewUrl;
+}
 
 const projectsData = [
   /* ── นิติบุคคลอาคารชุด เดอะปาล์ม เรสซิเดนซ์ (3 โครงการ) ── */
@@ -1155,7 +1178,11 @@ const PhotoGalleryUploader = ({ photos, onChange, photoPos, onPhotoPosChange, ph
     if (files.length === 0) return;
     Promise.all(files.map((f, i) => new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onload = () => resolve({ id: `${Date.now()}_${i}_${f.name}`, url: reader.result, caption: '' });
+      reader.onload = async () => {
+        let url = reader.result;
+        try { url = await uploadToDrive(f, 'site-photos'); } catch {}
+        resolve({ id: `${Date.now()}_${i}_${f.name}`, url, caption: '' });
+      };
       reader.readAsDataURL(f);
     }))).then((newPhotos) => {
       onChange([...photos, ...newPhotos]);
@@ -2322,17 +2349,19 @@ const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
    PAGE 2 — CRM & PROJECT EXPLORER
    ============================================================ */
 const CRMProjectExplorer = () => {
-  const [projects, setProjects] = useState(() => {
-    // Auto-create a blank new project on first open
-    const newId = 'PRJ-NEW-001';
-    const blank = { id: newId, name: '', customer: '', contact: '', taxId: '', value: 0, address: '', status: 'active', start: '11/06/2026', entity: 'entity1' };
-    return [blank, ...projectsData];
-  });
+  const blank = { id: 'PRJ-NEW-001', name: '', customer: '', contact: '', taxId: '', value: 0, address: '', status: 'active', start: '11/06/2026', entity: 'entity1' };
+  const [projects, setProjects] = useState([blank, ...projectsData]);
   const [selectedId, setSelectedId] = useState('PRJ-NEW-001');
   const [companyFilter, setCompanyFilter] = useState('all');
   const [entity, setEntity] = useState('entity1');
   const [activeDetailTab, setActiveDetailTab] = useState('customer');
   const [savedNotice, setSavedNotice] = useState(false);
+
+  useEffect(() => {
+    apiFetch('/api/sheets/projects').then((data) => {
+      if (data && data.length > 0) setProjects([blank, ...data]);
+    }).catch(() => {});
+  }, []);
 
   const project = projects.find((p) => p.id === selectedId);
   const revisions = revisionHistoryData[selectedId] || [];
@@ -2349,7 +2378,23 @@ const CRMProjectExplorer = () => {
     setProjects((prev) => prev.map((p) => (p.id === selectedId ? { ...p, [field]: value } : p)));
   };
 
-  const handleSaveProject = () => {
+  const handleSaveProject = async () => {
+    const p = projects.find((pr) => pr.id === selectedId);
+    if (!p) return;
+    try {
+      if (selectedId.startsWith('PRJ-NEW')) {
+        const newId = `PRJ-${Date.now()}`;
+        const saved = { ...p, id: newId };
+        await apiFetch('/api/sheets/projects', 'POST', saved);
+        setProjects((prev) => prev.map((pr) => pr.id === selectedId ? saved : pr));
+        setSelectedId(newId);
+      } else {
+        await apiFetch('/api/sheets/projects', 'PUT', p);
+      }
+    } catch (e) {
+      alert('บันทึกไม่สำเร็จ: ' + e.message);
+      return;
+    }
     setSavedNotice(true);
     setTimeout(() => setSavedNotice(false), 2500);
   };
@@ -2589,6 +2634,12 @@ const CRMProjectExplorer = () => {
    ============================================================ */
 const DocumentFlow = ({ paidDocIds, togglePaid }) => {
   const [documents, setDocuments] = useState(documentsData);
+
+  useEffect(() => {
+    apiFetch('/api/sheets/documents').then((data) => {
+      if (data && data.length > 0) setDocuments(data);
+    }).catch(() => {});
+  }, []);
   const [selectedProjectId, setSelectedProjectId] = useState(documentsData[0].projectId);
   const [selectedDocId, setSelectedDocId] = useState(documentsData[0].id);
   const [viewStage, setViewStage] = useState(documentsData[0].currentStage);
@@ -2654,10 +2705,37 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
   const updateCharge = (key) => (checked) => {
     setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], charges: { ...prev[formKey].charges, [key]: checked } } }));
   };
-  const handleSave = () => {
+  const handleSave = async () => {
+    let currentForm = form;
     if (form.docNo.includes('XXXX')) {
       const finalNo = form.docNo.replace('XXXX', String(1000 + Math.floor(Math.random() * 9000)));
-      setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], docNo: finalNo } }));
+      currentForm = { ...form, docNo: finalNo };
+      setFormStates((prev) => ({ ...prev, [formKey]: currentForm }));
+    }
+    if (doc) {
+      const updatedDoc = {
+        ...doc,
+        docNos: { ...doc.docNos, [viewStage]: currentForm.docNo },
+        docDates: { ...doc.docDates, [viewStage]: currentForm.docDate },
+        lineItems: currentForm.lineItems,
+        validity: currentForm.validity,
+        rev: currentForm.rev,
+        dueDate: currentForm.dueDate,
+        payMethod: currentForm.payMethod,
+        currentStage: viewStage,
+      };
+      try {
+        if (doc.id.startsWith('DOC-NEW')) {
+          const newId = `DOC-${Date.now()}`;
+          await apiFetch('/api/sheets/documents', 'POST', { ...updatedDoc, id: newId });
+          setDocuments((prev) => prev.map((d) => d.id === doc.id ? { ...updatedDoc, id: newId } : d));
+        } else {
+          await apiFetch('/api/sheets/documents', 'PUT', updatedDoc);
+          setDocuments((prev) => prev.map((d) => d.id === doc.id ? updatedDoc : d));
+        }
+      } catch (e) {
+        console.warn('Document save failed:', e.message);
+      }
     }
     setJustSavedKey(formKey);
     setTimeout(() => setJustSavedKey((k) => (k === formKey ? null : k)), 2500);
@@ -3279,6 +3357,15 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
 const HREmployeeCard = () => {
   const [employees, setEmployees] = useState(employeesData);
   const [selectedId, setSelectedId] = useState(employeesData[0].id);
+
+  useEffect(() => {
+    apiFetch('/api/sheets/employees').then((data) => {
+      if (data && data.length > 0) {
+        setEmployees(data);
+        setSelectedId(data[0].id);
+      }
+    }).catch(() => {});
+  }, []);
   const [siteFilter, setSiteFilter] = useState('all');
   const [cardEntity, setCardEntity] = useState('entity1');
   const [customCompanyName, setCustomCompanyName] = useState('');
@@ -3318,6 +3405,7 @@ const HREmployeeCard = () => {
       const remaining = employees.filter((x) => x.id !== emp.id);
       if (remaining.length > 0) setSelectedId(remaining[0].id);
     }
+    apiFetch('/api/sheets/employees', 'DELETE', { id: emp.id }).catch(() => {});
   };
 
   const handleBulkDelete = () => {
@@ -3325,6 +3413,7 @@ const HREmployeeCard = () => {
     const targets = employees.filter((e) => e.projectId === siteFilter);
     if (targets.length === 0) return;
     if (!window.confirm(`ลบพนักงานทั้งหมด ${targets.length} คน ของโครงการ "${project?.name || siteFilter}"?`)) return;
+    targets.forEach((emp) => apiFetch('/api/sheets/employees', 'DELETE', { id: emp.id }).catch(() => {}));
     setEmployees((prev) => prev.filter((e) => e.projectId !== siteFilter));
     setSiteFilter('all');
   };
@@ -3332,7 +3421,11 @@ const HREmployeeCard = () => {
   const handlePhotoUpload = (id, file) => {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setEmployeePhotos((prev) => ({ ...prev, [id]: reader.result }));
+    reader.onload = async () => {
+      let url = reader.result;
+      try { url = await uploadToDrive(file, 'employee-photos'); } catch {}
+      setEmployeePhotos((prev) => ({ ...prev, [id]: url }));
+    };
     reader.readAsDataURL(file);
   };
 
@@ -3341,14 +3434,20 @@ const HREmployeeCard = () => {
     setEmployeeDocs((prev) => ({ ...prev, [id]: { ...(prev[id] || {}), [kind]: file.name } }));
   };
 
-  const handleAddEmployee = () => {
+  const handleAddEmployee = async () => {
     if (!newEmployee.name.trim()) return;
     const n = employees.length + 15;
     const id = `EMP-2026-${String(n).padStart(3, '0')}`;
-    setEmployees((prev) => [...prev, { ...newEmployee, id }]);
+    const emp = { ...newEmployee, id };
+    setEmployees((prev) => [...prev, emp]);
     setEmployeeWages((prev) => ({ ...prev, [id]: Number(newEmployee.wage) || 450 }));
     if (newEmployee._photo) {
       setEmployeePhotos((prev) => ({ ...prev, [id]: newEmployee._photo }));
+    }
+    try {
+      await apiFetch('/api/sheets/employees', 'POST', emp);
+    } catch (e) {
+      console.warn('Employee save failed:', e.message);
     }
     setNewEmployee(blankEmployee);
     setShowAddEmployee(false);
@@ -4207,11 +4306,21 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
   const [recorder, setRecorder] = useState('');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState([]);
-  const [materials, setMaterials] = useState([
-    { id: 1, name: 'ดินปลูกผสมปุ๋ยหมัก', qty: 20, unit: 'ถุง', price: 85, vendor: 'ร้านวัสดุเกษตรบางนา' },
-    { id: 2, name: 'ต้นเฟิร์นใบมะขาม', qty: 15, unit: 'ต้น', price: 120, vendor: 'สวนกล้าไม้ปทุมธานี' },
-  ]);
+  const [materials, setMaterials] = useState([]);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    apiFetch('/api/sheets/materials').then((data) => {
+      if (data && data.length > 0) {
+        const last = data[data.length - 1];
+        if (last.materials) setMaterials(Array.isArray(last.materials) ? last.materials : []);
+        if (last.logDate) setLogDate(last.logDate);
+        if (last.recorder) setRecorder(last.recorder);
+        if (last.description) setDescription(last.description);
+        if (last.projectId) setProjectId(last.projectId);
+      }
+    }).catch(() => {});
+  }, []);
   const [showPhotoReport, setShowPhotoReport] = useState(false);
   const [photoPos, setPhotoPos] = useState({});
   const [photoZoom, setPhotoZoom] = useState({});
@@ -4433,7 +4542,11 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
           )}
 
           <button
-            onClick={() => setSaved(true)}
+            onClick={async () => {
+              const entry = { id: `MAT-${Date.now()}`, projectId, logDate, recorder, description, materials };
+              try { await apiFetch('/api/sheets/materials', 'POST', entry); } catch (e) { console.warn('Save failed:', e.message); }
+              setSaved(true);
+            }}
             className="tg-focus tg-navbtn w-full px-4 py-3 rounded-xl text-sm font-medium"
             style={{ background: 'var(--sage-soft)', border: '1px solid rgba(217,142,92,0.25)', color: 'var(--sage)' }}
           >
