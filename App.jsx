@@ -199,10 +199,12 @@ const ThemeStyles = () => (
       display: flex; align-items: flex-start; justify-content: center; overflow-y: auto;
     }
     @media print {
-      .tg-noprint { display: none !important; }
-      .tg-print-area { box-shadow: none !important; border: none !important; padding: 0 !important; max-height: none !important; overflow: visible !important; }
+      * { visibility: hidden !important; }
+      .tg-print-area, .tg-print-area * { visibility: visible !important; }
+      .tg-modal-backdrop { position: static !important; background: transparent !important; backdrop-filter: none !important; padding: 0 !important; }
+      .tg-print-area { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; max-width: 100% !important; height: auto !important; max-height: none !important; overflow: visible !important; box-shadow: none !important; border: none !important; padding: 24px !important; margin: 0 !important; background: #fff !important; }
+      .tg-noprint { display: none !important; visibility: hidden !important; }
       .tg-doc-copy { page-break-before: always; border-top: none !important; margin-top: 0 !important; padding-top: 0 !important; }
-      body, .tg-app, .tg-modal-backdrop { background: #fff !important; position: static !important; }
     }
   `}</style>
 );
