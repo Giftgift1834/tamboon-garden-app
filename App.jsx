@@ -2698,7 +2698,7 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded }) => {
   const project = projectsData.find((p) => p.id === selectedProjectId);
   const formKey = doc ? `${doc.id}__${viewStage}` : null;
   const form = (formKey && formStates[formKey]) || { lineItems: [], docNo: '', docDate: '', validity: '', rev: '', dueDate: '', qtRef: '', invRef: '', payMethod: '', charges: { ...DEFAULT_CHARGES }, note: '', poRef: '', poDate: '', branchType: 'hq', branchName: '', checkBank: '', checkNo: '', checkDate: '' };
-  const isPaid = doc ? paidDocIds.includes(doc.id) : false;
+  const isPaid = doc ? !!doc.paidAt : false;
   const stageLabel = DOC_STAGES.find((s) => s.key === viewStage).label;
   const isCurrentStage = doc ? viewStage === doc.currentStage : false;
   const rightTab = rightTabByKey[formKey] || 'details';
@@ -3239,7 +3239,10 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded }) => {
                     <p className="text-xs mb-4" style={{ color: 'var(--moss)' }}>อัปเดตสถานะใบเสร็จรับเงิน หากรับเงินแล้วระบบจะนำยอดสุทธิไปรวมใน Executive Dashboard ให้อัตโนมัติ</p>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button
-                        onClick={() => togglePaid(doc.id, false)}
+                        onClick={() => {
+                          setDocuments(prev => prev.map(d => d.id === doc.id ? { ...d, paidAt: '' } : d));
+                          togglePaid(doc.id, false);
+                        }}
                         className="tg-focus tg-navbtn flex-1 px-4 py-3 rounded-xl text-sm font-medium"
                         style={{
                           background: !isPaid ? 'var(--rust-soft)' : 'rgba(217,142,92,0.03)',
@@ -3250,7 +3253,12 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded }) => {
                         ยังไม่ได้รับเงิน
                       </button>
                       <button
-                        onClick={() => togglePaid(doc.id, true)}
+                        onClick={() => {
+                          const now = new Date();
+                          const paidAt = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear() + 543}`;
+                          setDocuments(prev => prev.map(d => d.id === doc.id ? { ...d, paidAt } : d));
+                          togglePaid(doc.id, true);
+                        }}
                         className="tg-focus tg-navbtn flex-1 px-4 py-3 rounded-xl text-sm font-medium"
                         style={{
                           background: isPaid ? 'var(--sage-soft)' : 'rgba(217,142,92,0.03)',
