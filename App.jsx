@@ -4624,21 +4624,28 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
                   <style>
                     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
                     @page { size: A4; margin: 10mm 15mm; }
+                    :root {
+                      --bone:#4A4F40; --moss:#9A9E8D; --sage:#D98E5C; --sage-soft:rgba(217,142,92,0.14);
+                      --gold:#C9A227; --gold-soft:rgba(201,162,39,0.15);
+                      --line:rgba(90,100,70,0.12); --line-strong:rgba(90,100,70,0.22);
+                    }
                     * { box-sizing: border-box; margin: 0; padding: 0; }
-                    body { font-family: 'Sarabun', sans-serif; font-size: 13px; color: #3d2c1e; background: #fff; }
-                    img { max-width: 100%; display: block; }
+                    body { font-family: 'Sarabun', sans-serif; font-size: 13px; color: var(--bone); background: #fff; }
+                    img { display: block; }
                     .tg-noprint { display: none !important; }
                     .tg-mono { font-family: 'Courier New', monospace; }
-                    .tg-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-weight: 700; }
-                    .tg-badge-sage { background: #e8f0e8; color: #4a7a5a; }
+                    .tg-badge { display: inline-block; padding: 4px 14px; border-radius: 9999px; font-weight: 700; border: 1px solid transparent; }
+                    .tg-badge-sage { background: var(--sage-soft); color: var(--sage); border-color: rgba(217,142,92,0.25); }
                     .tg-doc-copy { break-before: page; page-break-before: always; margin-top: 0 !important; padding-top: 0 !important; border-top: none !important; }
                     .flex { display: flex; } .items-start { align-items: flex-start; } .justify-between { justify-content: space-between; } .items-center { align-items: center; }
-                    .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-x-6 { column-gap: 1.5rem; } .gap-y-1 { row-gap: 0.25rem; }
+                    .gap-1\\.5 { gap: 0.375rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
+                    .gap-x-6 { column-gap: 1.5rem; } .gap-y-1 { row-gap: 0.25rem; }
                     .grid { display: grid; } .grid-cols-2 { grid-template-columns: repeat(2,1fr); } .col-span-2 { grid-column: span 2/span 2; }
                     .text-right { text-align: right; } .text-center { text-align: center; } .shrink-0 { flex-shrink: 0; }
                     .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; } .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; }
                     .w-16 { width: 4rem; } .h-16 { height: 4rem; } .w-full { width: 100%; } .h-full { height: 100%; }
-                    .pb-4 { padding-bottom: 1rem; } .my-4 { margin: 1rem 0; } .mb-4 { margin-bottom: 1rem; }
+                    .mt-1 { margin-top: 0.25rem; } .pb-4 { padding-bottom: 1rem; } .my-4 { margin: 1rem 0; } .mb-4 { margin-bottom: 1rem; }
+                    .px-1\\.5 { padding-left: 0.375rem; padding-right: 0.375rem; } .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
                     .rounded-lg { border-radius: 0.5rem; } .overflow-hidden { overflow: hidden; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
                   </style></head><body>${area.innerHTML}</body></html>`);
                   w.document.close();
