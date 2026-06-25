@@ -1700,12 +1700,14 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ชื่อบริษัท</span><span style={{ color: 'var(--bone)' }}>{project.customer}{showBranchSuffix && ` ${branchSuffix}`}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ที่อยู่</span><span style={{ color: 'var(--bone)' }}>{project.address}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>TaxID</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{project.taxId}</span></div>
+            {stage === 'quotation' && project.contact && (
+              <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ผู้ติดต่อ</span><span style={{ color: 'var(--bone)' }}>{project.contact}</span></div>
+            )}
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>โครงการ</span><span style={{ color: 'var(--bone)' }}>{doc.projectName}</span></div>
           </div>
           <div className="tg-doc-right">
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>เลขที่</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.docNo}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>วันที่</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{fmtDate(formData.docDate)}</span></div>
-            {project.contact && <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ผู้ติดต่อ</span><span style={{ color: 'var(--bone)' }}>{project.contact}</span></div>}
             {stage === 'quotation' && (
               <>
                 <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ยืนราคา</span><span style={{ color: 'var(--bone)' }}>{formData.validity}</span></div>
@@ -2420,17 +2422,25 @@ const CRMProjectExplorer = ({ onProjectsLoaded }) => {
     setProjects((prev) => prev.map((p) => (p.id === selectedId ? { ...p, [field]: value } : p)));
   };
 
+  const generateProjectId = () => {
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yy = String(now.getFullYear()).slice(-2);
+    const prefix = `PRJ-${mm}${yy}`;
+    const nums = projects
+      .map((pr) => pr.id)
+      .filter((id) => id && id.startsWith(prefix))
+      .map((id) => parseInt(id.slice(-3)) || 0);
+    const next = nums.length > 0 ? Math.max(...nums) + 1 : 1;
+    return `${prefix}${String(next).padStart(3, '0')}`;
+  };
+
   const handleSaveProject = async () => {
     const p = projects.find((pr) => pr.id === selectedId);
     if (!p) return;
     try {
       if (selectedId.startsWith('PRJ-NEW')) {
-        const nums = projects
-          .map((pr) => pr.id)
-          .filter((id) => /^PRJ-\d+$/.test(id))
-          .map((id) => parseInt(id.replace('PRJ-', ''), 10));
-        const next = nums.length > 0 ? Math.max(...nums) + 1 : 1;
-        const newId = `PRJ-${String(next).padStart(3, '0')}`;
+        const newId = generateProjectId();
         const saved = { ...p, id: newId };
         await apiFetch('/api/sheets/projects', 'POST', saved);
         setProjects((prev) => prev.map((pr) => pr.id === selectedId ? saved : pr));
@@ -2680,12 +2690,18 @@ const CRMProjectExplorer = ({ onProjectsLoaded }) => {
    PAGE 3 — SEAMLESS DOCUMENT FLOW
    ============================================================ */
 const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [] }) => {
-  const [documents, setDocuments] = useState(documentsData);
+  const [documents, setDocuments] = useState(() => {
+    try { const s = localStorage.getItem('tg_documents'); if (s) { const p = JSON.parse(s); if (Array.isArray(p) && p.length) return p; } } catch {}
+    return documentsData;
+  });
 
   useEffect(() => {
     const load = () => apiFetch('/api/sheets/documents').then((data) => {
       if (data && data.length > 0) {
-        setDocuments(data);
+        setDocuments((prev) => {
+          const unsaved = prev.filter((d) => d.id.startsWith('DOC-NEW'));
+          return [...data, ...unsaved];
+        });
         if (onDocsLoaded) onDocsLoaded(data);
       }
     }).catch(() => {});
@@ -2703,6 +2719,7 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [
   const [docPhotos, setDocPhotos] = useState({}); // keyed by docId
   const [showDocPhotoReport, setShowDocPhotoReport] = useState(false);
   const [formStates, setFormStates] = useState(() => {
+    try { const s = localStorage.getItem('tg_formStates'); if (s) { const p = JSON.parse(s); if (p && typeof p === 'object') return p; } } catch {}
     const acc = {};
     documentsData.forEach((d) => {
       DOC_STAGES.forEach((s) => {
@@ -2736,6 +2753,13 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [
   const [rightTabByKey, setRightTabByKey] = useState({});
   const [justSavedKey, setJustSavedKey] = useState(null);
 
+  useEffect(() => {
+    try { localStorage.setItem('tg_documents', JSON.stringify(documents)); } catch {}
+  }, [documents]);
+  useEffect(() => {
+    try { localStorage.setItem('tg_formStates', JSON.stringify(formStates)); } catch (e) { /* quota: skip */ }
+  }, [formStates]);
+
   const projectDocs = documents.filter((d) => d.projectId === selectedProjectId);
   const doc = projectDocs.find((d) => d.id === selectedDocId) || projectDocs[0];
   const liveProjectsList = sheetsProjects.length > 0 ? sheetsProjects : projectsData;
@@ -2754,13 +2778,14 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [
 
   const updateForm = (field) => (e) => {
     const val = e.target.value;
-    setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], [field]: val } }));
+    setFormStates((prev) => ({ ...prev, [formKey]: { ...(prev[formKey] || form), [field]: val } }));
   };
   const updateLineItems = (items) => {
-    setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], lineItems: items } }));
+    setFormStates((prev) => ({ ...prev, [formKey]: { ...(prev[formKey] || form), lineItems: items } }));
   };
   const updateCharge = (key) => (checked) => {
-    setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], charges: { ...prev[formKey].charges, [key]: checked } } }));
+    const base = prev => prev[formKey] || form;
+    setFormStates((prev) => ({ ...prev, [formKey]: { ...base(prev), charges: { ...(base(prev).charges || form.charges), [key]: checked } } }));
   };
   const handleSave = async () => {
     let currentForm = form;
@@ -3195,16 +3220,16 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [
                           </label>
                           <div className="space-y-2">
                             <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--bone)' }}>
-                              <input type="radio" name={`branchType-${formKey}`} checked={form.branchType === 'hq'} onChange={() => setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], branchType: 'hq' } }))} />
+                              <input type="radio" name={`branchType-${formKey}`} checked={form.branchType === 'hq'} onChange={() => setFormStates((prev) => ({ ...prev, [formKey]: { ...(prev[formKey] || form), branchType: 'hq' } }))} />
                               สำนักงานใหญ่
                             </label>
                             <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--bone)' }}>
-                              <input type="radio" name={`branchType-${formKey}`} checked={form.branchType === 'branch'} onChange={() => setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], branchType: 'branch' } }))} />
+                              <input type="radio" name={`branchType-${formKey}`} checked={form.branchType === 'branch'} onChange={() => setFormStates((prev) => ({ ...prev, [formKey]: { ...(prev[formKey] || form), branchType: 'branch' } }))} />
                               สาขา
                               <input
                                 type="text"
                                 value={form.branchName}
-                                onChange={(e) => setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], branchType: 'branch', branchName: e.target.value } }))}
+                                onChange={(e) => setFormStates((prev) => ({ ...prev, [formKey]: { ...(prev[formKey] || form), branchType: 'branch', branchName: e.target.value } }))}
                                 placeholder="พิมพ์ชื่อสาขา..."
                                 className="tg-input tg-focus px-2.5 py-1.5 text-sm flex-1"
                               />
@@ -3255,10 +3280,12 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [
                   <div className="space-y-4 lg:pl-8 lg:border-l" style={{ borderColor: 'var(--line)' }}>
                     <h3 className="text-sm font-semibold" style={{ color: 'var(--bone)' }}>ข้อมูลลูกค้า</h3>
                     <FormField label="ชื่อบริษัท (Customer_Company)" value={project.customer} icon={Building2} />
-                    <FormField label="ที่อยู่ (Customer_Address)" value={project.address} icon={MapPin} area />
                     <FormField label="เลขผู้เสียภาษี (Customer_TaxID)" value={project.taxId} icon={Hash} mono />
                     <FormField label="โครงการ (Project_Name)" value={doc.projectName} icon={FolderKanban} />
-                    <FormField label="ผู้ติดต่อ (Contact_Name)" value={project.contact} icon={User} />
+                    <FormField label="ที่อยู่ (Customer_Address)" value={project.address} icon={MapPin} area />
+                    {viewStage === 'quotation' && (
+                      <FormField label="ผู้ติดต่อ (Contact_Name)" value={project.contact} icon={User} />
+                    )}
                   </div>
                 </div>
               </div>
@@ -3466,9 +3493,16 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [
 /* ============================================================
    PAGE 4 — HR & EMPLOYEE CARD
    ============================================================ */
-const HREmployeeCard = () => {
-  const [employees, setEmployees] = useState(employeesData);
+const HREmployeeCard = ({ projects = projectsData }) => {
+  const [employees, setEmployees] = useState(() => {
+    try { const s = localStorage.getItem('tg_employees'); if (s) return JSON.parse(s); } catch {}
+    return employeesData;
+  });
   const [selectedId, setSelectedId] = useState(employeesData[0].id);
+
+  useEffect(() => {
+    try { localStorage.setItem('tg_employees', JSON.stringify(employees)); } catch {}
+  }, [employees]);
 
   useEffect(() => {
     let first = true;
@@ -3526,7 +3560,7 @@ const HREmployeeCard = () => {
   };
 
   const handleBulkDelete = () => {
-    const project = projectsData.find((p) => p.id === siteFilter);
+    const project = projects.find((p) => p.id === siteFilter);
     const targets = employees.filter((e) => e.projectId === siteFilter);
     if (targets.length === 0) return;
     if (!window.confirm(`ลบพนักงานทั้งหมด ${targets.length} คน ของโครงการ "${project?.name || siteFilter}"?`)) return;
@@ -3583,7 +3617,7 @@ const HREmployeeCard = () => {
   };
 
   const handleExportProjectCards = () => {
-    const project = projectsData.find((p) => p.id === siteFilter);
+    const project = projects.find((p) => p.id === siteFilter);
     const targets = employees.filter((e) => e.projectId === siteFilter);
     setExportNotice(`กำลังส่งออกบัตรพนักงาน ${targets.length} คน ของโครงการ "${project?.name || siteFilter}" (ตัวอย่าง)`);
     setTimeout(() => setExportNotice(''), 3500);
@@ -3599,6 +3633,7 @@ const HREmployeeCard = () => {
         </div>
         <div className="flex flex-wrap items-center gap-3 justify-end ml-auto">
           <ProjectSearchSelect
+            items={projects.filter((p) => p.name)}
             value={siteFilter}
             onChange={(v) => setSiteFilter(v)}
             allowAllLabel="ทุกไซต์งาน / ทุกโครงการ"
@@ -3944,7 +3979,7 @@ const HREmployeeCard = () => {
                 <div className="relative">
                   <select value={detailEmployee.site || ''} onChange={(e) => setDetailEmployee((p) => ({ ...p, site: e.target.value }))} className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2 text-sm">
                     <option value="">— เลือกไซต์งาน —</option>
-                    {projectsData.filter((p) => p.status === 'active').map((p) => (
+                    {projects.filter((p) => p.status === 'active' && p.name).map((p) => (
                       <option key={p.id} value={p.name}>{p.name}</option>
                     ))}
                     <option value="สำนักงาน">สำนักงาน</option>
@@ -4043,7 +4078,7 @@ const HREmployeeCard = () => {
                 <div className="relative">
                   <select value={newEmployee.site} onChange={(e) => setNewEmployee((p) => ({ ...p, site: e.target.value }))} className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2 text-sm">
                     <option value="">— เลือกไซต์งาน —</option>
-                    {projectsData.filter((p) => p.status === 'active').map((p) => (
+                    {projects.filter((p) => p.status === 'active' && p.name).map((p) => (
                       <option key={p.id} value={p.name}>{p.name}</option>
                     ))}
                     <option value="สำนักงาน">สำนักงาน</option>
@@ -4324,7 +4359,7 @@ const HREmployeeCard = () => {
 
             <div className="text-center my-4">
               <span className="tg-badge tg-badge-sage" style={{ fontSize: 14, padding: '0.4rem 1.25rem', fontWeight: 700 }}>สรุปจ่ายเงินเดือนพนักงานทั่วไป</span>
-              <p className="text-xs mt-2" style={{ color: 'var(--moss)' }}>{siteFilter === 'all' ? 'พนักงานทั้งหมด' : projectsData.find((p) => p.id === siteFilter)?.name || ''}</p>
+              <p className="text-xs mt-2" style={{ color: 'var(--moss)' }}>{siteFilter === 'all' ? 'พนักงานทั้งหมด' : projects.find((p) => p.id === siteFilter)?.name || ''}</p>
             </div>
 
             <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
@@ -4417,15 +4452,23 @@ const HREmployeeCard = () => {
 /* ============================================================
    PAGE 5 — SITE LOG & DIRECT COSTING
    ============================================================ */
-const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
-  const [projectId, setProjectId] = useState(projectsData[0].id);
+const SiteLogCosting = ({ setProjectDirectCost, setPage, projects = projectsData }) => {
+  const firstRealProject = projects.find((p) => p.name && !p.id.startsWith('PRJ-NEW')) || projects[0] || projectsData[0];
+  const [projectId, setProjectId] = useState(firstRealProject.id);
   const [activeTab, setActiveTab] = useState('info');
   const [logDate, setLogDate] = useState('11/06/2026');
   const [recorder, setRecorder] = useState('');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState([]);
-  const [materials, setMaterials] = useState([]);
+  const [materials, setMaterials] = useState(() => {
+    try { const s = localStorage.getItem('tg_materials'); if (s) return JSON.parse(s); } catch {}
+    return [];
+  });
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    try { localStorage.setItem('tg_materials', JSON.stringify(materials)); } catch {}
+  }, [materials]);
 
   useEffect(() => {
     let first = true;
@@ -4454,7 +4497,7 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
   const [photoReportStageFilter, setPhotoReportStageFilter] = useState('all');
   const [photoReportDetails, setPhotoReportDetails] = useState({ title: 'รายงานรูปถ่ายหน้างาน', scope: '', ref: '' });
 
-  const project = projectsData.find((p) => p.id === projectId);
+  const project = projects.find((p) => p.id === projectId) || projectsData.find((p) => p.id === projectId);
 
   const updateMaterial = (id, field, value) => {
     setMaterials((prev) => prev.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
@@ -4472,7 +4515,10 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
   const totalCost = materials.reduce((s, m) => s + (Number(m.qty) || 0) * (Number(m.price) || 0), 0);
 
   React.useEffect(() => {
-    if (setProjectDirectCost) setProjectDirectCost(projectId, totalCost);
+    const t = setTimeout(() => {
+      if (setProjectDirectCost) setProjectDirectCost(projectId, totalCost);
+    }, 300);
+    return () => clearTimeout(t);
   }, [projectId, totalCost]);
 
   const filteredReportPhotos = photos.filter((ph) => photoReportStageFilter === 'all' || (ph.stage || 'before') === photoReportStageFilter);
@@ -4508,6 +4554,7 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
               <div className="sm:col-span-2">
                 <label className="text-xs mb-1.5 block" style={{ color: 'var(--moss)' }}>โครงการ</label>
                 <ProjectSearchSelect
+                  items={projects.filter((p) => p.name)}
                   value={projectId}
                   onChange={(v) => { setProjectId(v); setSaved(false); }}
                   placeholder="ค้นหาโครงการ..."
@@ -4922,10 +4969,17 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
    ============================================================ */
 export default function App() {
   const [page, setPage] = useState('dashboard');
-  const [paidDocIds, setPaidDocIds]       = useState([]);
+  const [paidDocIds, setPaidDocIds] = useState(() => {
+    try { const s = localStorage.getItem('tg_paidDocIds'); if (s) return JSON.parse(s); } catch {}
+    return [];
+  });
   const [sheetsDocs, setSheetsDocs]       = useState([]);
   const [sheetsProjects, setSheetsProjects] = useState([]);
   const [directCosts, setDirectCosts]     = useState({});
+
+  useEffect(() => {
+    try { localStorage.setItem('tg_paidDocIds', JSON.stringify(paidDocIds)); } catch {}
+  }, [paidDocIds]);
 
   const setProjectDirectCost = (projectId, total) => {
     setDirectCosts((prev) => ({ ...prev, [projectId]: total }));
@@ -4965,10 +5019,10 @@ export default function App() {
           <DocumentFlow paidDocIds={paidDocIds} togglePaid={togglePaid} onDocsLoaded={handleDocsLoaded} sheetsProjects={sheetsProjects} />
         </div>
         <div style={{ display: page === 'hr' ? 'block' : 'none' }}>
-          <HREmployeeCard />
+          <HREmployeeCard projects={sheetsProjects.length > 0 ? sheetsProjects : projectsData} />
         </div>
         <div style={{ display: page === 'sitelog' ? 'block' : 'none' }}>
-          <SiteLogCosting setProjectDirectCost={setProjectDirectCost} setPage={setPage} />
+          <SiteLogCosting setProjectDirectCost={setProjectDirectCost} setPage={setPage} projects={sheetsProjects.length > 0 ? sheetsProjects : projectsData} />
         </div>
       </main>
     </div>
