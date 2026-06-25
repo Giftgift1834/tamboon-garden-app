@@ -1634,7 +1634,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
     <div className="tg-modal-backdrop">
       <div className="tg-panel tg-print-area tg-scroll" style={{ maxWidth: 760, width: '100%', margin: '0.5rem 0', maxHeight: '94vh', overflowY: 'auto', padding: '36px 40px', background: '#fff' }}>
         {copies.map((label, idx) => (
-        <div key={idx} className={idx > 0 ? 'tg-doc-copy' : ''} style={{ display: 'flex', flexDirection: 'column', ...(idx > 0 ? { borderTop: '2px dashed var(--line-strong)', marginTop: 24, paddingTop: 24 } : undefined) }}>
+        <div key={idx} className={`tg-doc-page${idx > 0 ? ' tg-doc-copy' : ''}`} style={{ display: 'flex', flexDirection: 'column', ...(idx > 0 ? { borderTop: '2px dashed var(--line-strong)', marginTop: 24, paddingTop: 24 } : undefined) }}>
         {/* Header */}
         <div className="flex items-start justify-between gap-4 pb-4" style={{ borderBottom: '2px solid var(--bone)' }}>
           <div className="flex items-start gap-3">
@@ -1794,7 +1794,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
 
         {/* Signatures */}
         {stage === 'receipt' ? (
-          <div className="grid grid-cols-3 gap-6 text-center text-xs" style={{ color: 'var(--moss)', marginTop: '15mm', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
+          <div className="grid grid-cols-3 gap-6 text-center text-xs tg-sig-area" style={{ color: 'var(--moss)', marginTop: 'auto', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
             <div>
               <div className="flex justify-center mb-1" style={{ height: 32 }}>
                 {stage === 'quotation' && <SignatureMark style={{ height: '100%', width: 'auto' }} />}
@@ -1814,7 +1814,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-10 text-center text-xs" style={{ color: 'var(--moss)', marginTop: '15mm', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
+          <div className="grid grid-cols-2 gap-10 text-center text-xs tg-sig-area" style={{ color: 'var(--moss)', marginTop: 'auto', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
             <div>
               <div className="flex justify-center mb-1" style={{ height: 32 }}>
                 {stage === 'quotation' && <SignatureMark style={{ height: '100%', width: 'auto' }} />}
@@ -1855,7 +1855,9 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
                 .tg-mono { font-family: 'Courier New', monospace; }
                 .tg-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-weight: 700; }
                 .tg-badge-sage { background: #e8f0e8; color: #4a7a5a; }
-                .tg-doc-copy { page-break-before: always; border-top: none !important; margin-top: 0 !important; padding-top: 0 !important; }
+                .tg-doc-page { display: flex !important; flex-direction: column !important; min-height: 257mm; }
+                .tg-doc-copy { break-before: page; page-break-before: always; border-top: none !important; margin-top: 0 !important; padding-top: 0 !important; }
+                .tg-sig-area { margin-top: auto !important; padding-top: 8mm; }
                 .tg-noprint { display: none !important; }
               </style></head><body>${area.innerHTML}</body></html>`);
               w.document.close();
@@ -4055,6 +4057,7 @@ const HREmployeeCard = () => {
       {showPayrollPDF && (
         <div className="tg-modal-backdrop">
           <div className="tg-panel tg-print-area tg-scroll" style={{ maxWidth: 760, width: '100%', margin: '0.5rem 0', maxHeight: '94vh', overflowY: 'auto', padding: '36px 40px', background: '#fff' }}>
+            <div id="tg-payroll-pdf-content">
             <div className="flex items-start justify-between gap-4 pb-4" style={{ borderBottom: '2px solid var(--bone)' }}>
               <div className="flex items-start gap-3">
                 <BranchMark className="w-16 h-16 shrink-0" style={{ color: '#1a1a1a' }} />
@@ -4116,10 +4119,39 @@ const HREmployeeCard = () => {
                 </tr>
               </tfoot>
             </table>
+            </div>{/* end tg-payroll-pdf-content */}
 
             <div className="tg-noprint flex gap-3 mt-6">
               <button onClick={() => setShowPayrollPDF(false)} className="tg-focus tg-navbtn flex-1 px-4 py-3 rounded-xl text-sm font-medium" style={{ background: 'rgba(217,142,92,0.03)', border: '1px solid var(--line)', color: 'var(--moss)' }}>ปิด</button>
-              <button onClick={() => window.print()} className="tg-focus tg-navbtn flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium" style={{ background: 'var(--sage)', color: '#fff' }}>
+              <button
+                onClick={() => {
+                  const area = document.getElementById('tg-payroll-pdf-content');
+                  if (!area) { window.print(); return; }
+                  const w = window.open('', '_blank', 'width=900,height=700');
+                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>สรุปจ่ายเงินเดือน</title>
+                  <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+                    @page { size: A4; margin: 15mm 20mm; }
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                    body { font-family: 'Sarabun', sans-serif; font-size: 13px; color: #3d2c1e; background: #fff; }
+                    table { border-collapse: collapse; width: 100%; }
+                    th, td { border: 1px solid #ddd; padding: 6px 8px; }
+                    th { background: #f5f0eb; font-weight: 600; }
+                    .tg-mono { font-family: 'Courier New', monospace; }
+                    .tg-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-weight: 700; }
+                    .tg-badge-sage { background: #e8f0e8; color: #4a7a5a; }
+                    .tg-noprint { display: none !important; }
+                    .flex { display: flex; } .items-start { align-items: flex-start; } .justify-between { justify-content: space-between; } .items-center { align-items: center; }
+                    .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
+                    .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; } .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; }
+                    .w-16 { width: 4rem; } .h-16 { height: 4rem; } .shrink-0 { flex-shrink: 0; }
+                    .pb-4 { padding-bottom: 1rem; } .mt-1 { margin-top: 0.25rem; } .mb-4 { margin-bottom: 1rem; } .mt-6 { margin-top: 1.5rem; }
+                    .p-8 { padding: 2rem; }
+                  </style></head><body>${area.innerHTML}</body></html>`);
+                  w.document.close();
+                  setTimeout(() => { w.focus(); w.print(); w.close(); }, 500);
+                }}
+                className="tg-focus tg-navbtn flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium" style={{ background: 'var(--sage)', color: '#fff' }}>
                 <Printer size={16} strokeWidth={1.75} /> พิมพ์ / บันทึก PDF
               </button>
             </div>
@@ -4492,6 +4524,7 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
             </div>
 
             {/* Photo pages */}
+            <div id="tg-photo-report-pages">
             {Array.from({ length: totalReportPages }).map((_, pageIdx) => {
               const pagePhotos = filteredReportPhotos.slice(pageIdx * PHOTOS_PER_PAGE, pageIdx * PHOTOS_PER_PAGE + PHOTOS_PER_PAGE);
               const slots = [...pagePhotos];
@@ -4549,12 +4582,42 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
                 </div>
               );
             })}
+            </div>
 
             <div className="tg-noprint flex gap-3 justify-end mt-6">
               <button onClick={() => setShowPhotoReport(false)} className="tg-focus tg-navbtn px-5 py-3 rounded-xl text-sm font-medium" style={{ background: 'rgba(217,142,92,0.03)', border: '1px solid var(--line)', color: 'var(--moss)' }}>
                 ปิด
               </button>
-              <button onClick={() => window.print()} className="tg-focus tg-navbtn flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-medium" style={{ background: 'var(--sage)', color: '#fff' }}>
+              <button
+                onClick={() => {
+                  const area = document.getElementById('tg-photo-report-pages');
+                  if (!area) return;
+                  const w = window.open('', '_blank', 'width=900,height=700');
+                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>รายงานภาพถ่ายหน้างาน</title>
+                  <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+                    @page { size: A4; margin: 10mm 15mm; }
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                    body { font-family: 'Sarabun', sans-serif; font-size: 13px; color: #3d2c1e; background: #fff; }
+                    img { max-width: 100%; display: block; }
+                    .tg-noprint { display: none !important; }
+                    .tg-mono { font-family: 'Courier New', monospace; }
+                    .tg-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-weight: 700; }
+                    .tg-badge-sage { background: #e8f0e8; color: #4a7a5a; }
+                    .tg-doc-copy { break-before: page; page-break-before: always; margin-top: 0 !important; padding-top: 0 !important; border-top: none !important; }
+                    .flex { display: flex; } .items-start { align-items: flex-start; } .justify-between { justify-content: space-between; } .items-center { align-items: center; }
+                    .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-x-6 { column-gap: 1.5rem; } .gap-y-1 { row-gap: 0.25rem; }
+                    .grid { display: grid; } .grid-cols-2 { grid-template-columns: repeat(2,1fr); } .col-span-2 { grid-column: span 2/span 2; }
+                    .text-right { text-align: right; } .text-center { text-align: center; } .shrink-0 { flex-shrink: 0; }
+                    .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; } .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; }
+                    .w-16 { width: 4rem; } .h-16 { height: 4rem; } .w-full { width: 100%; } .h-full { height: 100%; }
+                    .pb-4 { padding-bottom: 1rem; } .my-4 { margin: 1rem 0; } .mb-4 { margin-bottom: 1rem; }
+                    .rounded-lg { border-radius: 0.5rem; } .overflow-hidden { overflow: hidden; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+                  </style></head><body>${area.innerHTML}</body></html>`);
+                  w.document.close();
+                  setTimeout(() => { w.focus(); w.print(); w.close(); }, 800);
+                }}
+                className="tg-focus tg-navbtn flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-medium" style={{ background: 'var(--sage)', color: '#fff' }}>
                 <Printer size={16} strokeWidth={1.75} /> พิมพ์ / บันทึก PDF
               </button>
             </div>
