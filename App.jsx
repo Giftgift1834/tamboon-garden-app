@@ -1794,7 +1794,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
 
         {/* Signatures */}
         {stage === 'receipt' ? (
-          <div className="grid grid-cols-3 gap-6 text-center text-xs tg-sig-area" style={{ color: 'var(--moss)', marginTop: 'auto', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
+          <div className="grid grid-cols-3 gap-6 text-center text-xs tg-sig-area" style={{ color: 'var(--moss)', marginTop: '15mm', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
             <div>
               <div className="flex justify-center mb-1" style={{ height: 32 }}>
                 {stage === 'quotation' && <SignatureMark style={{ height: '100%', width: 'auto' }} />}
@@ -1814,7 +1814,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-10 text-center text-xs tg-sig-area" style={{ color: 'var(--moss)', marginTop: 'auto', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
+          <div className="grid grid-cols-2 gap-10 text-center text-xs tg-sig-area" style={{ color: 'var(--moss)', marginTop: '15mm', paddingTop: '10mm', borderTop: '1px solid var(--line)' }}>
             <div>
               <div className="flex justify-center mb-1" style={{ height: 32 }}>
                 {stage === 'quotation' && <SignatureMark style={{ height: '100%', width: 'auto' }} />}
