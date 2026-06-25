@@ -1847,17 +1847,44 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
               <style>
                 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
                 @page { size: A4; margin: 15mm 20mm; }
+                :root {
+                  --bone:#4A4F40; --moss:#9A9E8D; --sage:#D98E5C; --sage-soft:rgba(217,142,92,0.14);
+                  --gold:#C9A227; --gold-soft:rgba(201,162,39,0.15); --line:rgba(90,100,70,0.12);
+                  --line-strong:rgba(90,100,70,0.22);
+                }
                 * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: 'Sarabun', sans-serif; font-size: 13px; color: #3d2c1e; background: #fff; }
+                body { font-family: 'Sarabun', sans-serif; font-size: 13px; color: var(--bone); background: #fff; }
                 table { border-collapse: collapse; width: 100%; }
                 th, td { border: 1px solid #ddd; padding: 6px 8px; }
                 th { background: #f5f0eb; font-weight: 600; }
+                /* Tailwind utilities */
+                .flex { display: flex; } .inline-block { display: inline-block; }
+                .flex-col { flex-direction: column; } .items-start { align-items: flex-start; } .items-center { align-items: center; } .items-end { align-items: flex-end; }
+                .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
+                .shrink-0 { flex-shrink: 0; }
+                .grid { display: grid; }
+                .grid-cols-2 { grid-template-columns: repeat(2,1fr); }
+                .grid-cols-3 { grid-template-columns: repeat(3,1fr); }
+                .col-span-2 { grid-column: span 2/span 2; }
+                .gap-1\\.5 { gap: 0.375rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-10 { gap: 2.5rem; }
+                .w-16 { width: 4rem; } .h-16 { height: 4rem; } .w-full { width: 100%; }
+                .text-base { font-size: 1rem; } .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; }
+                .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-medium { font-weight: 500; } .font-normal { font-weight: 400; }
+                .text-center { text-align: center; } .text-right { text-align: right; } .text-left { text-align: left; }
+                .mt-1 { margin-top: 0.25rem; } .mt-1\\.5 { margin-top: 0.375rem; } .mt-3 { margin-top: 0.75rem; } .mt-5 { margin-top: 1.25rem; } .mt-8 { margin-top: 2rem; } .mt-10 { margin-top: 2.5rem; }
+                .mb-1 { margin-bottom: 0.25rem; } .mb-1\\.5 { margin-bottom: 0.375rem; }
+                .my-3 { margin: 0.75rem 0; }
+                .pb-4 { padding-bottom: 1rem; } .pt-2 { padding-top: 0.5rem; } .py-1\\.5 { padding: 0.375rem 0; } .py-2 { padding: 0.5rem 0; } .px-2 { padding: 0 0.5rem; } .px-4 { padding: 0 1rem; }
+                .space-y-1 > * + * { margin-top: 0.25rem; }
+                .rounded-xl { border-radius: 0.75rem; }
+                /* Custom classes */
                 .tg-mono { font-family: 'Courier New', monospace; }
-                .tg-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-weight: 700; }
-                .tg-badge-sage { background: #e8f0e8; color: #4a7a5a; }
+                .tg-badge { display: inline-block; padding: 4px 14px; border-radius: 9999px; font-weight: 700; border: 1px solid transparent; }
+                .tg-badge-sage { background: var(--sage-soft); color: var(--sage); border-color: rgba(217,142,92,0.25); }
+                .tg-badge-gold { background: var(--gold-soft); color: var(--gold); border-color: rgba(201,162,39,0.3); }
                 .tg-doc-page { display: flex !important; flex-direction: column !important; min-height: 257mm; }
                 .tg-doc-copy { break-before: page; page-break-before: always; border-top: none !important; margin-top: 0 !important; padding-top: 0 !important; }
-                .tg-sig-area { margin-top: auto !important; padding-top: 8mm; }
+                .tg-sig-area { margin-top: auto !important; }
                 .tg-noprint { display: none !important; }
               </style></head><body>${area.innerHTML}</body></html>`);
               w.document.close();
