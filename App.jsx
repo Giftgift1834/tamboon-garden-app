@@ -2359,9 +2359,13 @@ const CRMProjectExplorer = () => {
   const [savedNotice, setSavedNotice] = useState(false);
 
   useEffect(() => {
-    apiFetch('/api/sheets/projects').then((data) => {
+    const load = () => apiFetch('/api/sheets/projects').then((data) => {
       if (data && data.length > 0) setProjects([blank, ...data]);
     }).catch(() => {});
+    load();
+    const timer = setInterval(load, 60000);
+    window.addEventListener('focus', load);
+    return () => { clearInterval(timer); window.removeEventListener('focus', load); };
   }, []);
 
   const project = projects.find((p) => p.id === selectedId);
@@ -2637,9 +2641,13 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
   const [documents, setDocuments] = useState(documentsData);
 
   useEffect(() => {
-    apiFetch('/api/sheets/documents').then((data) => {
+    const load = () => apiFetch('/api/sheets/documents').then((data) => {
       if (data && data.length > 0) setDocuments(data);
     }).catch(() => {});
+    load();
+    const timer = setInterval(load, 60000);
+    window.addEventListener('focus', load);
+    return () => { clearInterval(timer); window.removeEventListener('focus', load); };
   }, []);
   const [selectedProjectId, setSelectedProjectId] = useState(documentsData[0].projectId);
   const [selectedDocId, setSelectedDocId] = useState(documentsData[0].id);
@@ -3361,12 +3369,17 @@ const HREmployeeCard = () => {
   const [selectedId, setSelectedId] = useState(employeesData[0].id);
 
   useEffect(() => {
-    apiFetch('/api/sheets/employees').then((data) => {
+    let first = true;
+    const load = () => apiFetch('/api/sheets/employees').then((data) => {
       if (data && data.length > 0) {
         setEmployees(data);
-        setSelectedId(data[0].id);
+        if (first) { setSelectedId(data[0].id); first = false; }
       }
     }).catch(() => {});
+    load();
+    const timer = setInterval(load, 60000);
+    window.addEventListener('focus', load);
+    return () => { clearInterval(timer); window.removeEventListener('focus', load); };
   }, []);
   const [siteFilter, setSiteFilter] = useState('all');
   const [cardEntity, setCardEntity] = useState('entity1');
@@ -4313,16 +4326,24 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    apiFetch('/api/sheets/materials').then((data) => {
+    let first = true;
+    const load = () => apiFetch('/api/sheets/materials').then((data) => {
       if (data && data.length > 0) {
         const last = data[data.length - 1];
         if (last.materials) setMaterials(Array.isArray(last.materials) ? last.materials : []);
-        if (last.logDate) setLogDate(last.logDate);
-        if (last.recorder) setRecorder(last.recorder);
-        if (last.description) setDescription(last.description);
-        if (last.projectId) setProjectId(last.projectId);
+        if (first) {
+          if (last.logDate) setLogDate(last.logDate);
+          if (last.recorder) setRecorder(last.recorder);
+          if (last.description) setDescription(last.description);
+          if (last.projectId) setProjectId(last.projectId);
+          first = false;
+        }
       }
     }).catch(() => {});
+    load();
+    const timer = setInterval(load, 60000);
+    window.addEventListener('focus', load);
+    return () => { clearInterval(timer); window.removeEventListener('focus', load); };
   }, []);
   const [showPhotoReport, setShowPhotoReport] = useState(false);
   const [photoPos, setPhotoPos] = useState({});
