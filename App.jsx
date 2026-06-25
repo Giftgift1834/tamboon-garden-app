@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   AreaChart,
   Area,
@@ -22,6 +22,7 @@ import {
   User,
   MapPin,
   Phone,
+  Heart,
   Hash,
   FileText,
   Search,
@@ -142,22 +143,24 @@ const ThemeStyles = () => (
       .tg-split.tg-25-75 > *:nth-child(2) { width: calc(74% - 1.25rem); flex-shrink: 0; }
       .tg-split.tg-50-50 > *:nth-child(1) { width: 50%; flex-shrink: 0; }
       .tg-split.tg-50-50 > *:nth-child(2) { width: calc(50% - 1.25rem); flex-shrink: 0; }
+      .tg-split.tg-60-40 > *:nth-child(1) { width: 63%; flex-shrink: 0; }
+      .tg-split.tg-60-40 > *:nth-child(2) { width: calc(37% - 1.25rem); flex-shrink: 0; }
     }
     @media (min-width: 900px) {
       .tg-split.tg-85-15 { flex-direction: row; }
-      .tg-split.tg-85-15 > *:nth-child(1) { width: 60%; flex-shrink: 0; }
-      .tg-split.tg-85-15 > *:nth-child(2) { width: calc(40% - 1.25rem); flex-shrink: 0; }
+      .tg-split.tg-85-15 > *:nth-child(1) { width: 70%; flex-shrink: 0; }
+      .tg-split.tg-85-15 > *:nth-child(2) { width: calc(30% - 1.25rem); flex-shrink: 0; }
       .tg-split.tg-15-85 { flex-direction: row; }
-      .tg-split.tg-15-85 > *:nth-child(1) { width: calc(40% - 1.25rem); flex-shrink: 0; }
-      .tg-split.tg-15-85 > *:nth-child(2) { width: 60%; flex-shrink: 0; }
+      .tg-split.tg-15-85 > *:nth-child(1) { width: calc(30% - 1.25rem); flex-shrink: 0; }
+      .tg-split.tg-15-85 > *:nth-child(2) { width: 70%; flex-shrink: 0; }
     }
 
     /* Document preview: customer-info block aligned to line-items table columns */
     .tg-doc-info { display: flex; gap: 0 1.5rem; margin-bottom: 1.25rem; font-size: 0.875rem; }
-    .tg-doc-left { width: 60%; }
-    .tg-doc-right { width: calc(40% - 1.5rem); }
-    .tg-doc-row { display: grid; grid-template-columns: 78px 1fr; gap: 0.5rem; padding: 0.1rem 0; align-items: baseline; }
-    .tg-doc-right .tg-doc-row { grid-template-columns: 70px 1fr; }
+    .tg-doc-left { width: 66%; }
+    .tg-doc-right { width: calc(34% - 1.5rem); }
+    .tg-doc-row { display: grid; grid-template-columns: 68px 1fr; gap: 0.5rem; padding: 0.1rem 0; align-items: baseline; }
+    .tg-doc-right .tg-doc-row { grid-template-columns: 72px 1fr; }
     .tg-select option { background: var(--panel); color: var(--bone); }
 
     .tg-badge {
@@ -275,18 +278,36 @@ const revenueData = [
 ];
 
 const projectsData = [
+  /* ── นิติบุคคลอาคารชุด เดอะปาล์ม เรสซิเดนซ์ (3 โครงการ) ── */
   {
     id: 'PRJ-001',
-    name: 'จัดสวนคอนโดมิเนียม The Palm Residence',
+    name: 'จัดสวนคอนโดมิเนียม The Palm Residence (เฟส 1)',
     customer: 'นิติบุคคลอาคารชุด เดอะปาล์ม เรสซิเดนซ์',
     contact: 'คุณวิภาวี ตันติวงศ์ (ผู้จัดการนิติบุคคล)',
     address: '99/12 ซอยสุขุมวิท 71 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพมหานคร 10110',
     taxId: '0105558112233',
-    entity: 'entity1',
-    status: 'active',
-    value: 1250000,
-    start: '01/03/2026',
+    entity: 'entity1', status: 'active', value: 1250000, start: '01/03/2026',
   },
+  {
+    id: 'PRJ-001B',
+    name: 'บำรุงรักษาสวนรายเดือน The Palm Residence',
+    customer: 'นิติบุคคลอาคารชุด เดอะปาล์ม เรสซิเดนซ์',
+    contact: 'คุณวิภาวี ตันติวงศ์ (ผู้จัดการนิติบุคคล)',
+    address: '99/12 ซอยสุขุมวิท 71 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพมหานคร 10110',
+    taxId: '0105558112233',
+    entity: 'entity1', status: 'active', value: 360000, start: '01/04/2026',
+  },
+  {
+    id: 'PRJ-001C',
+    name: 'ปรับปรุงสวนหย่อมชั้น 3 The Palm Residence',
+    customer: 'นิติบุคคลอาคารชุด เดอะปาล์ม เรสซิเดนซ์',
+    contact: 'คุณวิภาวี ตันติวงศ์ (ผู้จัดการนิติบุคคล)',
+    address: '99/12 ซอยสุขุมวิท 71 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพมหานคร 10110',
+    taxId: '0105558112233',
+    entity: 'entity1', status: 'pending', value: 180000, start: '01/08/2026',
+  },
+
+  /* ── บริษัท กรีนพาวเวอร์ จำกัด (มหาชน) (3 โครงการ) ── */
   {
     id: 'PRJ-002',
     name: 'ดูแลภูมิทัศน์สำนักงานใหญ่ กรีนพาวเวอร์',
@@ -294,11 +315,28 @@ const projectsData = [
     contact: 'คุณธนกร ศรีสุข (ฝ่ายจัดซื้อ)',
     address: '1 อาคารกรีนพาวเวอร์ ถ.วิภาวดีรังสิต แขวงจอมพล เขตจตุจักร กรุงเทพมหานคร 10900',
     taxId: '0107558445566',
-    entity: 'entity1',
-    status: 'active',
-    value: 480000,
-    start: '15/01/2026',
+    entity: 'entity1', status: 'active', value: 480000, start: '15/01/2026',
   },
+  {
+    id: 'PRJ-002B',
+    name: 'จัดสวนแผนกต้อนรับ กรีนพาวเวอร์ (โรงงานบางปู)',
+    customer: 'บริษัท กรีนพาวเวอร์ จำกัด (มหาชน)',
+    contact: 'คุณธนกร ศรีสุข (ฝ่ายจัดซื้อ)',
+    address: '88/8 ถ.สุขุมวิท ต.บางปูใหม่ อ.เมือง จ.สมุทรปราการ 10280',
+    taxId: '0107558445566',
+    entity: 'entity1', status: 'completed', value: 220000, start: '01/10/2025',
+  },
+  {
+    id: 'PRJ-002C',
+    name: 'ติดตั้งระบบรดน้ำอัตโนมัติ กรีนพาวเวอร์ สำนักงานใหญ่',
+    customer: 'บริษัท กรีนพาวเวอร์ จำกัด (มหาชน)',
+    contact: 'คุณธนกร ศรีสุข (ฝ่ายจัดซื้อ)',
+    address: '1 อาคารกรีนพาวเวอร์ ถ.วิภาวดีรังสิต แขวงจอมพล เขตจตุจักร กรุงเทพมหานคร 10900',
+    taxId: '0107558445566',
+    entity: 'entity1', status: 'active', value: 145000, start: '01/05/2026',
+  },
+
+  /* ── บริษัท ริเวอร์ไซด์ โฮเทล จำกัด (2 โครงการ) ── */
   {
     id: 'PRJ-003',
     name: 'จัดสวนแนวตั้ง โรงแรมริเวอร์ไซด์',
@@ -306,11 +344,19 @@ const projectsData = [
     contact: 'คุณมานพ เจริญสุข (วิศวกรอาคาร)',
     address: '88 ถ.เจริญนคร แขวงคลองต้นไทร เขตคลองสาน กรุงเทพมหานคร 10600',
     taxId: '0105561223344',
-    entity: 'entity2',
-    status: 'completed',
-    value: 890000,
-    start: '10/11/2025',
+    entity: 'entity2', status: 'completed', value: 890000, start: '10/11/2025',
   },
+  {
+    id: 'PRJ-003B',
+    name: 'ดูแลสวนรายเดือน โรงแรมริเวอร์ไซด์',
+    customer: 'บริษัท ริเวอร์ไซด์ โฮเทล จำกัด',
+    contact: 'คุณมานพ เจริญสุข (วิศวกรอาคาร)',
+    address: '88 ถ.เจริญนคร แขวงคลองต้นไทร เขตคลองสาน กรุงเทพมหานคร 10600',
+    taxId: '0105561223344',
+    entity: 'entity2', status: 'active', value: 96000, start: '01/03/2026',
+  },
+
+  /* ── นิติบุคคลหมู่บ้านจัดสรร เดอะแกรนด์ วิลเลจ (2 โครงการ) ── */
   {
     id: 'PRJ-004',
     name: 'ปรับภูมิทัศน์สวนส่วนกลาง เดอะแกรนด์ วิลเลจ',
@@ -318,11 +364,19 @@ const projectsData = [
     contact: 'คุณสุนทรี พรหมมา (ประธานนิติบุคคล)',
     address: '55/8 หมู่ 4 ถ.บางนา-ตราด กม.12 ต.บางแก้ว อ.บางพลี จ.สมุทรปราการ 10540',
     taxId: '0135562778899',
-    entity: 'entity1',
-    status: 'pending',
-    value: 650000,
-    start: '01/07/2026',
+    entity: 'entity1', status: 'pending', value: 650000, start: '01/07/2026',
   },
+  {
+    id: 'PRJ-004B',
+    name: 'ปลูกต้นไม้แนวรั้ว เดอะแกรนด์ วิลเลจ',
+    customer: 'นิติบุคคลหมู่บ้านจัดสรร เดอะแกรนด์ วิลเลจ',
+    contact: 'คุณสุนทรี พรหมมา (ประธานนิติบุคคล)',
+    address: '55/8 หมู่ 4 ถ.บางนา-ตราด กม.12 ต.บางแก้ว อ.บางพลี จ.สมุทรปราการ 10540',
+    taxId: '0135562778899',
+    entity: 'entity1', status: 'active', value: 285000, start: '15/05/2026',
+  },
+
+  /* ── คุณอนันต์ วงศ์ไพศาล (2 โครงการ) ── */
   {
     id: 'PRJ-005',
     name: 'จัดสวน Pool Villa เขาใหญ่',
@@ -330,11 +384,19 @@ const projectsData = [
     contact: 'คุณอนันต์ วงศ์ไพศาล (เจ้าของบ้าน)',
     address: '120 หมู่ 7 ต.โป่งตาลอง อ.ปากช่อง จ.นครราชสีมา 30130',
     taxId: '3100501234567',
-    entity: 'entity2',
-    status: 'active',
-    value: 320000,
-    start: '20/04/2026',
+    entity: 'entity2', status: 'active', value: 320000, start: '20/04/2026',
   },
+  {
+    id: 'PRJ-005B',
+    name: 'บำรุงรักษาสวน Pool Villa เขาใหญ่ (รายปี)',
+    customer: 'คุณอนันต์ วงศ์ไพศาล',
+    contact: 'คุณอนันต์ วงศ์ไพศาล (เจ้าของบ้าน)',
+    address: '120 หมู่ 7 ต.โป่งตาลอง อ.ปากช่อง จ.นครราชสีมา 30130',
+    taxId: '3100501234567',
+    entity: 'entity2', status: 'active', value: 84000, start: '01/06/2026',
+  },
+
+  /* ── บริษัท ซี.ดับเบิ้ลยู. ทาวเวอร์ จำกัด (2 โครงการ) ── */
   {
     id: 'PRJ-006',
     name: 'บำรุงรักษาสวนรายเดือน CW Tower',
@@ -342,10 +404,16 @@ const projectsData = [
     contact: 'คุณกัลยา ทองดี (ฝ่ายอาคารสถานที่)',
     address: '90 ถ.รัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพมหานคร 10310',
     taxId: '0105563998877',
-    entity: 'entity1',
-    status: 'active',
-    value: 180000,
-    start: '01/01/2026',
+    entity: 'entity1', status: 'active', value: 180000, start: '01/01/2026',
+  },
+  {
+    id: 'PRJ-006B',
+    name: 'จัดสวนลอฟต์บาร์ ชั้น 25 CW Tower',
+    customer: 'บริษัท ซี.ดับเบิ้ลยู. ทาวเวอร์ จำกัด',
+    contact: 'คุณกัลยา ทองดี (ฝ่ายอาคารสถานที่)',
+    address: '90 ถ.รัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพมหานคร 10310',
+    taxId: '0105563998877',
+    entity: 'entity1', status: 'completed', value: 430000, start: '15/02/2026',
   },
 ];
 
@@ -417,7 +485,7 @@ const revisionHistoryData = {
    ============================================================ */
 const DOC_STAGES = [
   { key: 'quotation', label: 'ใบเสนอราคา' },
-  { key: 'billing', label: 'ใบวางบิล' },
+  { key: 'billing', label: 'ใบวางบิล/ใบแจ้งหนี้' },
   { key: 'tax_invoice', label: 'ใบกำกับภาษี' },
   { key: 'receipt', label: 'ใบเสร็จรับเงิน' },
 ];
@@ -425,9 +493,21 @@ const DOC_STAGES = [
 /* document title / total-row label as printed on each form (per docx) */
 const DOC_TITLES = {
   quotation: 'ใบเสนอราคา',
-  billing: 'ใบแจ้งหนี้ / ใบวางบิล',
-  tax_invoice: 'ใบกำกับภาษี / ใบส่งสินค้า',
+  billing: 'ใบวางบิล/ใบแจ้งหนี้',
+  tax_invoice: 'ใบกำกับภาษี',
   receipt: 'ใบเสร็จรับเงิน',
+};
+const DOC_TITLES_EN = {
+  quotation: 'QUOTATION',
+  billing: 'BILLING NOTE / INVOICE',
+  tax_invoice: 'TAX INVOICE',
+  receipt: 'RECEIPT',
+};
+const DOC_SIGNATORY_ROLE = {
+  quotation: 'ผู้เสนอราคา',
+  billing: 'ผู้วางบิล',
+  tax_invoice: 'ผู้ออกใบกำกับภาษี',
+  receipt: 'ผู้รับเงิน',
 };
 const DOC_TOTAL_LABEL = {
   quotation: 'ยอดสุทธิ',
@@ -787,12 +867,40 @@ const Toggle = ({ checked, onChange, label }) => (
   </label>
 );
 
+// Helpers: convert between dd/mm/yyyy (our system) and yyyy-mm-dd (HTML date input)
+const toIso = (dmy) => {
+  if (!dmy) return '';
+  // Already ISO format yyyy-mm-dd
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dmy)) return dmy;
+  // Convert dd/mm/yyyy → yyyy-mm-dd
+  const [d, m, y] = dmy.split('/');
+  if (!d || !m || !y) return '';
+  return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+};
+const toDmy = (iso) => {
+  if (!iso) return '';
+  // Already dd/mm/yyyy
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(iso)) return iso;
+  // Convert yyyy-mm-dd → dd/mm/yyyy
+  const [y, m, d] = iso.split('-');
+  if (!d || !m || !y) return iso;
+  return `${d}/${m}/${y}`;
+};
+
+// Always display a date as dd/mm/yyyy regardless of how it's stored
+const fmtDate = (val) => toDmy(toIso(val) || val);
+
 const FormField = ({ label, value, onChange, icon: Icon, mono, area, full, placeholder, type }) => {
+  const isDate = type === 'date';
   const controlled = typeof onChange === 'function';
+  const displayValue = isDate ? toIso(value) : (value ?? '');
+  const handleChange = isDate
+    ? (e) => onChange && onChange({ ...e, target: { ...e.target, value: toDmy(e.target.value) } })
+    : onChange;
   const common = {
     className: `tg-input tg-focus w-full px-3 py-2 text-sm ${mono ? 'tg-mono' : ''}`,
     placeholder,
-    ...(controlled ? { value: value ?? '', onChange } : { defaultValue: value }),
+    ...(controlled ? { value: displayValue, onChange: handleChange } : { defaultValue: displayValue }),
     ...(type === 'number' ? { onFocus: (e) => e.target.select() } : {}),
   };
   return (
@@ -958,10 +1066,10 @@ const EmployeeCard = ({ employee, entityKey, customCompanyName, photoUrl }) => {
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '10px 14px', gap: 8, borderTop: '1px dashed var(--line-strong)', borderBottom: '1px dashed var(--line-strong)' }}>
-          {/* employee photo */}
+          {/* employee photo — square */}
           <div
             style={{
-              width: 64, height: 64, borderRadius: '9999px', overflow: 'hidden', flexShrink: 0,
+              width: 81, height: 83, borderRadius: 8, overflow: 'hidden', flexShrink: 0,
               background: 'var(--sage-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center',
               border: '1px solid var(--line-strong)',
             }}
@@ -969,7 +1077,7 @@ const EmployeeCard = ({ employee, entityKey, customCompanyName, photoUrl }) => {
             {photoUrl ? (
               <img src={photoUrl} alt={employee.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
-              <User size={28} strokeWidth={1.5} style={{ color: 'var(--sage)' }} />
+              <User size={32} strokeWidth={1.5} style={{ color: 'var(--sage)' }} />
             )}
           </div>
           <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--bone)', lineHeight: 1.35 }}>{employee.name}</p>
@@ -1017,16 +1125,35 @@ const PhotoUploadZone = ({ label, image, onChange }) => (
    ============================================================ */
 const PHOTOS_PER_PAGE = 8;
 
-const PhotoGalleryUploader = ({ photos, onChange }) => {
+const PhotoGalleryUploader = ({ photos, onChange, photoPos, onPhotoPosChange, photoZoom, onPhotoZoomChange }) => {
   const [page, setPage] = useState(0);
   const [dragOver, setDragOver] = useState(false);
+
+  const getPos = (id) => (photoPos || {})[id] || { x: 50, y: 50 };
+  const getZoom = (id) => (photoZoom || {})[id] || 1;
+
+  const startPosDrag = (id, startX, startY) => {
+    const startPos = getPos(id);
+    const zoom = getZoom(id);
+    const onMove = (mv) => {
+      const dx = mv.clientX - startX;
+      const dy = mv.clientY - startY;
+      const sens = 0.08 / zoom;
+      const nx = Math.max(0, Math.min(100, startPos.x - dx * sens));
+      const ny = Math.max(0, Math.min(100, startPos.y - dy * sens));
+      onPhotoPosChange && onPhotoPosChange((prev) => ({ ...prev, [id]: { x: nx, y: ny } }));
+    };
+    const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
 
   const addFiles = (fileList) => {
     const files = Array.from(fileList || []).filter((f) => f.type.startsWith('image/'));
     if (files.length === 0) return;
     Promise.all(files.map((f, i) => new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onload = () => resolve({ id: `${Date.now()}_${i}_${f.name}`, url: reader.result, caption: '', stage: 'before' });
+      reader.onload = () => resolve({ id: `${Date.now()}_${i}_${f.name}`, url: reader.result, caption: '' });
       reader.readAsDataURL(f);
     }))).then((newPhotos) => {
       onChange([...photos, ...newPhotos]);
@@ -1036,11 +1163,7 @@ const PhotoGalleryUploader = ({ photos, onChange }) => {
   };
 
   const updateCaption = (id, caption) => onChange(photos.map((p) => (p.id === id ? { ...p, caption } : p)));
-  const toggleStage = (id) => onChange(photos.map((p) => (p.id === id ? { ...p, stage: p.stage === 'after' ? 'before' : 'after' } : p)));
   const removePhoto = (id) => onChange(photos.filter((p) => p.id !== id));
-
-  const beforeCount = photos.filter((p) => (p.stage || 'before') === 'before').length;
-  const afterCount = photos.length - beforeCount;
 
   const totalPages = Math.max(1, Math.ceil(photos.length / PHOTOS_PER_PAGE));
   const currentPage = Math.min(page, totalPages - 1);
@@ -1050,18 +1173,12 @@ const PhotoGalleryUploader = ({ photos, onChange }) => {
 
   return (
     <div>
-      {/* Drop zone + multi-file picker */}
       <label
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles(e.dataTransfer.files); }}
         className="tg-focus flex flex-col items-center justify-center gap-2 rounded-xl cursor-pointer mb-4 text-center"
-        style={{
-          border: `1px dashed ${dragOver ? 'var(--sage)' : 'var(--line-strong)'}`,
-          background: dragOver ? 'var(--sage-soft)' : 'rgba(217,142,92,0.02)',
-          padding: '2rem 1rem',
-          transition: 'background-color 0.15s ease, border-color 0.15s ease',
-        }}
+        style={{ border: `1px dashed ${dragOver ? 'var(--sage)' : 'var(--line-strong)'}`, background: dragOver ? 'var(--sage-soft)' : 'rgba(217,142,92,0.02)', padding: '2rem 1rem', transition: 'all 0.15s ease' }}
       >
         <Upload size={24} strokeWidth={1.5} style={{ color: dragOver ? 'var(--sage)' : 'var(--moss)' }} />
         <p className="text-sm" style={{ color: 'var(--bone)' }}>ลากไฟล์ภาพมาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์</p>
@@ -1073,80 +1190,58 @@ const PhotoGalleryUploader = ({ photos, onChange }) => {
         <p className="text-sm text-center py-6" style={{ color: 'var(--moss)' }}>ยังไม่มีรูปภาพ</p>
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-            <p className="text-xs" style={{ color: 'var(--moss)' }}>ทั้งหมด {photos.length} รูป · จัดหน้าละ {PHOTOS_PER_PAGE} รูป ตามฟอร์มรายงานรูปถ่ายหน้างาน</p>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <p className="text-xs" style={{ color: 'var(--moss)' }}>ทั้งหมด {photos.length} รูป · หน้าละ {PHOTOS_PER_PAGE} รูป · ลากรูปเพื่อจัดตำแหน่ง · slider ซูม</p>
             {totalPages > 1 && (
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  disabled={currentPage === 0}
-                  className="tg-focus tg-navbtn px-2.5 py-1 rounded-lg text-xs"
-                  style={{ border: '1px solid var(--line-strong)', color: currentPage === 0 ? 'var(--line-strong)' : 'var(--bone)' }}
-                >
-                  ‹
-                </button>
+                <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={currentPage === 0} className="tg-focus tg-navbtn px-2.5 py-1 rounded-lg text-xs" style={{ border: '1px solid var(--line-strong)', color: currentPage === 0 ? 'var(--line-strong)' : 'var(--bone)' }}>‹</button>
                 <span className="text-xs tg-mono" style={{ color: 'var(--bone)' }}>หน้า {currentPage + 1} / {totalPages}</span>
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                  disabled={currentPage === totalPages - 1}
-                  className="tg-focus tg-navbtn px-2.5 py-1 rounded-lg text-xs"
-                  style={{ border: '1px solid var(--line-strong)', color: currentPage === totalPages - 1 ? 'var(--line-strong)' : 'var(--bone)' }}
-                >
-                  ›
-                </button>
+                <button onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))} disabled={currentPage === totalPages - 1} className="tg-focus tg-navbtn px-2.5 py-1 rounded-lg text-xs" style={{ border: '1px solid var(--line-strong)', color: currentPage === totalPages - 1 ? 'var(--line-strong)' : 'var(--bone)' }}>›</button>
               </div>
             )}
           </div>
-          <p className="text-xs mb-3" style={{ color: 'var(--moss)' }}>
-            <span style={{ color: 'var(--sage)' }}>● ก่อนทำงาน {beforeCount} รูป</span> — ใช้คู่กับใบเสนอราคา &nbsp;·&nbsp;
-            <span style={{ color: 'var(--gold)' }}>● หลังทำงาน {afterCount} รูป</span> — ใช้คู่กับใบวางบิล/ใบกำกับภาษี/ใบเสร็จรับเงิน &nbsp;·&nbsp; คลิกแถบสีบนรูปเพื่อสลับ
-          </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {slots.map((p, i) =>
               p ? (
                 <div key={p.id} className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--line)' }}>
-                  <div style={{ aspectRatio: '4 / 3', position: 'relative', background: 'rgba(217,142,92,0.03)' }}>
-                    <img src={p.url} alt={p.caption || 'site photo'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <span
-                      className="tg-mono"
-                      style={{ position: 'absolute', top: 6, left: 6, fontSize: 10, padding: '0.1rem 0.4rem', borderRadius: 9999, background: 'rgba(110,80,55,0.55)', color: '#fff' }}
-                    >
+                  <div
+                    style={{ aspectRatio: '4 / 3', position: 'relative', overflow: 'hidden', background: 'rgba(217,142,92,0.03)', cursor: 'grab', userSelect: 'none' }}
+                    onMouseDown={(e) => { if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return; e.preventDefault(); startPosDrag(p.id, e.clientX, e.clientY); }}
+                  >
+                    <img
+                      src={p.url}
+                      alt={p.caption || 'site photo'}
+                      draggable={false}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `${getPos(p.id).x}% ${getPos(p.id).y}%`, transform: `scale(${getZoom(p.id)})`, transformOrigin: `${getPos(p.id).x}% ${getPos(p.id).y}%`, pointerEvents: 'none' }}
+                    />
+                    {/* Number */}
+                    <span style={{ position: 'absolute', top: 6, left: 6, fontSize: 10, padding: '0.1rem 0.4rem', borderRadius: 4, background: 'rgba(0,0,0,0.5)', color: '#fff', fontWeight: 600 }}>
                       {currentPage * PHOTOS_PER_PAGE + i + 1}
                     </span>
-                    <button
-                      onClick={() => toggleStage(p.id)}
-                      className="tg-focus"
-                      style={{
-                        position: 'absolute', bottom: 6, left: 6, fontSize: 10, padding: '0.15rem 0.5rem', borderRadius: 9999,
-                        background: (p.stage || 'before') === 'after' ? 'var(--gold)' : 'var(--sage)', color: '#fff', fontWeight: 600,
-                      }}
-                    >
-                      {(p.stage || 'before') === 'after' ? 'หลังทำงาน' : 'ก่อนทำงาน'}
-                    </button>
-                    <button
-                      onClick={() => removePhoto(p.id)}
-                      className="tg-focus"
-                      style={{ position: 'absolute', top: 6, right: 6, width: 20, height: 20, borderRadius: 9999, background: 'rgba(110,80,55,0.55)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      aria-label="ลบรูป"
-                    >
+                    {/* Zoom slider */}
+                    <div style={{ position: 'absolute', bottom: 6, left: 6, right: 28, display: 'flex', alignItems: 'center' }}>
+                      <input type="range" min="1" max="3" step="0.05" value={getZoom(p.id)}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onChange={(e) => { e.stopPropagation(); onPhotoZoomChange && onPhotoZoomChange((prev) => ({ ...prev, [p.id]: Number(e.target.value) })); }}
+                        style={{ width: '100%', height: 4, cursor: 'pointer', accentColor: '#fff' }}
+                        title={`ซูม ${getZoom(p.id).toFixed(1)}×`}
+                      />
+                    </div>
+                    {/* Delete */}
+                    <button onMouseDown={(e) => e.stopPropagation()} onClick={() => removePhoto(p.id)} className="tg-focus"
+                      style={{ position: 'absolute', top: 6, right: 6, width: 20, height: 20, borderRadius: 9999, background: 'rgba(110,80,55,0.55)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <X size={12} strokeWidth={2} />
                     </button>
                   </div>
-                  <input
-                    value={p.caption}
-                    onChange={(e) => updateCaption(p.id, e.target.value)}
-                    placeholder="คำอธิบายภาพ..."
+                  <input value={p.caption} onChange={(e) => updateCaption(p.id, e.target.value)} placeholder="คำอธิบายภาพ..."
                     className="tg-focus w-full px-2 py-1.5 text-xs"
                     style={{ border: 'none', borderTop: '1px solid var(--line)', borderRadius: 0, background: 'var(--panel)', color: 'var(--bone)' }}
                   />
                 </div>
               ) : (
-                <div
-                  key={`empty-${currentPage}-${i}`}
-                  className="rounded-xl flex items-center justify-center"
-                  style={{ aspectRatio: '4 / 3', border: '1px dashed var(--line)', background: 'rgba(217,142,92,0.015)' }}
-                >
+                <div key={`empty-${currentPage}-${i}`} className="rounded-xl flex items-center justify-center"
+                  style={{ aspectRatio: '4 / 3', border: '1px dashed var(--line)', background: 'rgba(217,142,92,0.015)' }}>
                   <span className="text-xs" style={{ color: 'var(--moss)' }}>ช่องที่ {currentPage * PHOTOS_PER_PAGE + i + 1}</span>
                 </div>
               )
@@ -1270,71 +1365,268 @@ const IssuanceHistory = ({ doc }) => {
    LINE ITEMS EDITOR — รายการ / จำนวน / หน่วย / ราคาต่อหน่วย / รวม
    ============================================================ */
 const LineItemsEditor = ({ items, onChange }) => {
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiPreview, setAiPreview] = useState(null); // parsed items before confirm
+
   const update = (id, field, val) => {
     onChange(items.map((it) => (it.id === id ? { ...it, [field]: val } : it)));
   };
-  const add = () => onChange([...items, { id: Date.now(), description: '', qty: 1, unit: 'งาน', price: 0 }]);
   const remove = (id) => onChange(items.filter((it) => it.id !== id));
 
+  // Get display number for an item (e.g. "1", "1.1", "2", "2.3")
+  const getNum = (idx) => {
+    const it = items[idx];
+    if (!it.parentId) {
+      // Count main items before this one
+      let n = 0;
+      for (let i = 0; i <= idx; i++) { if (!items[i].parentId) n++; }
+      return String(n);
+    } else {
+      // Find parent number and sub-index
+      const parentIdx = items.findIndex((x) => x.id === it.parentId);
+      const parentNum = parentIdx >= 0 ? getNum(parentIdx) : '?';
+      let sub = 0;
+      for (let i = 0; i <= idx; i++) { if (items[i].parentId === it.parentId) sub++; }
+      return `${parentNum}.${sub}`;
+    }
+  };
+
+  const addMain = () => {
+    onChange([...items, { id: Date.now(), description: '', qty: 1, unit: 'งาน', price: 0 }]);
+  };
+
+  const addSub = () => {
+    if (items.length === 0) { addMain(); return; }
+    // Find last main item
+    let lastMainId = null;
+    for (let i = items.length - 1; i >= 0; i--) {
+      if (!items[i].parentId) { lastMainId = items[i].id; break; }
+    }
+    if (!lastMainId) { addMain(); return; }
+    onChange([...items, { id: Date.now(), description: '', qty: 1, unit: 'งาน', price: 0, parentId: lastMainId }]);
+  };
+
+  // AI image reader
+  const handleAiImage = async (file) => {
+    if (!file) return;
+    setAiLoading(true);
+    setAiPreview(null);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result.split(',')[1];
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 1000,
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'image', source: { type: 'base64', media_type: file.type, data: base64 } },
+                { type: 'text', text: 'จากรูปนี้ ให้แยกรายการสินค้า/บริการออกมาเป็น JSON array โดยมี field: description (ชื่อรายการ), qty (จำนวนตัวเลข), unit (หน่วย เช่น งาน ต้น ชุด เมตร), price (ราคาต่อหน่วย ถ้าไม่มีใส่ 0) ตอบเป็น JSON array เท่านั้น ไม่มีข้อความอื่น' }
+              ]
+            }]
+          })
+        });
+        const data = await res.json();
+        const text = data.content?.[0]?.text || '[]';
+        const clean = text.replace(/```json|```/g, '').trim();
+        const parsed = JSON.parse(clean);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAiPreview(parsed.map((x, i) => ({ id: Date.now() + i, description: x.description || '', qty: Number(x.qty) || 1, unit: x.unit || 'งาน', price: Number(x.price) || 0 })));
+        }
+      } catch (e) {
+        alert('ไม่สามารถอ่านรูปได้ กรุณาลองใหม่');
+      }
+      setAiLoading(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const confirmAi = () => {
+    onChange([...items, ...aiPreview]);
+    setAiPreview(null);
+  };
+
   return (
-    <div className="overflow-x-auto tg-scroll">
-      <table className="w-full text-sm" style={{ borderCollapse: 'collapse', minWidth: '640px' }}>
-        <thead>
-          <tr className="text-left text-xs uppercase tracking-wider" style={{ color: 'var(--moss)', borderBottom: '1px solid var(--line)' }}>
-            <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '6%' }}>ลำดับ</th>
-            <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '38%' }}>รายการ</th>
-            <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '10%' }}>จำนวน</th>
-            <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '10%' }}>หน่วย</th>
-            <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '16%' }}>ราคาต่อหน่วย (บาท)</th>
-            <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '16%' }}>ราคาทั้งหมด (บาท)</th>
-            <th className="pb-2.5" style={{ width: '4%' }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((it, idx) => (
-            <tr key={it.id} style={{ borderBottom: '1px solid var(--line)' }}>
-              <td className="py-2 pr-3 tg-mono text-center" style={{ color: 'var(--moss)' }}>{idx + 1}</td>
-              <td className="py-2 pr-3">
-                <input value={it.description} onChange={(e) => update(it.id, 'description', e.target.value)} className="tg-input tg-focus w-full px-2.5 py-1.5 text-sm" />
-              </td>
-              <td className="py-2 pr-3">
-                <input type="number" value={it.qty} onFocus={(e) => e.target.select()} onChange={(e) => update(it.id, 'qty', e.target.value)} className="tg-input tg-focus tg-mono w-full px-2.5 py-1.5 text-sm text-center" />
-              </td>
-              <td className="py-2 pr-3">
-                <input value={it.unit} onChange={(e) => update(it.id, 'unit', e.target.value)} className="tg-input tg-focus w-full px-2.5 py-1.5 text-sm text-center" />
-              </td>
-              <td className="py-2 pr-3">
-                <input type="number" value={it.price} onFocus={(e) => e.target.select()} onChange={(e) => update(it.id, 'price', e.target.value)} className="tg-input tg-focus tg-mono w-full px-2.5 py-1.5 text-sm" />
-              </td>
-              <td className="py-2 pr-3 text-right tg-mono font-medium" style={{ color: 'var(--bone)' }}>
-                {fmtTHB((Number(it.qty) || 0) * (Number(it.price) || 0))}
-              </td>
-              <td className="py-2 text-right">
-                <button onClick={() => remove(it.id)} className="tg-focus tg-navbtn p-1.5 rounded-lg" style={{ color: 'var(--rust)' }} aria-label="ลบรายการ">
+    <div>
+      <div className="overflow-x-auto tg-scroll">
+        <table className="w-full text-sm" style={{ borderCollapse: 'collapse', minWidth: '640px' }}>
+          <thead>
+            <tr className="text-left text-xs uppercase tracking-wider" style={{ color: 'var(--moss)', borderBottom: '1px solid var(--line)' }}>
+              <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '6%' }}>ลำดับ</th>
+              <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '38%' }}>รายการ</th>
+              <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '10%' }}>จำนวน</th>
+              <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '10%' }}>หน่วย</th>
+              <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '16%' }}>ราคาต่อหน่วย (บาท)</th>
+              <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '16%' }}>ราคาทั้งหมด (บาท)</th>
+              <th className="pb-2.5" style={{ width: '4%' }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((it, idx) => {
+              const num = getNum(idx);
+              const isSub = !!it.parentId;
+              return (
+                <tr key={it.id} style={{ borderBottom: '1px solid var(--line)', background: isSub ? 'rgba(217,142,92,0.018)' : 'transparent' }}>
+                  <td className="py-2 pr-3 tg-mono text-center" style={{ color: isSub ? 'var(--moss)' : 'var(--bone)', fontSize: isSub ? 11 : 13 }}>{num}</td>
+                  <td className="py-2 pr-3" style={{ paddingLeft: isSub ? '1.5rem' : undefined }}>
+                    <input value={it.description} onChange={(e) => update(it.id, 'description', e.target.value)} className="tg-input tg-focus w-full px-2.5 py-1.5 text-sm" />
+                  </td>
+                  <td className="py-2 pr-3">
+                    <input type="number" value={it.qty} onFocus={(e) => e.target.select()} onChange={(e) => update(it.id, 'qty', e.target.value)} className="tg-input tg-focus tg-mono w-full px-2.5 py-1.5 text-sm text-center" />
+                  </td>
+                  <td className="py-2 pr-3">
+                    <input value={it.unit} onChange={(e) => update(it.id, 'unit', e.target.value)} className="tg-input tg-focus w-full px-2.5 py-1.5 text-sm text-center" />
+                  </td>
+                  <td className="py-2 pr-3">
+                    <input type="number" value={it.price} onFocus={(e) => e.target.select()} onChange={(e) => update(it.id, 'price', e.target.value)} className="tg-input tg-focus tg-mono w-full px-2.5 py-1.5 text-sm" />
+                  </td>
+                  <td className="py-2 pr-3 text-right tg-mono font-medium" style={{ color: 'var(--bone)' }}>
+                    {fmtTHB((Number(it.qty) || 0) * (Number(it.price) || 0))}
+                  </td>
+                  <td className="py-2 text-right">
+                    <button onClick={() => remove(it.id)} className="tg-focus tg-navbtn p-1.5 rounded-lg" style={{ color: 'var(--rust)' }} aria-label="ลบรายการ">
+                      <Trash2 size={14} strokeWidth={1.75} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex flex-wrap items-center gap-2 mt-3">
+        <button onClick={addMain} className="tg-focus tg-navbtn flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium" style={{ background: 'var(--sage-soft)', border: '1px solid rgba(217,142,92,0.25)', color: 'var(--sage)' }}>
+          <Plus size={14} strokeWidth={2} /> เพิ่มรายการ
+        </button>
+        <button onClick={addSub} disabled={items.filter((x) => !x.parentId).length === 0} className="tg-focus tg-navbtn flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium" style={{ background: 'rgba(138,155,110,0.12)', border: '1px solid rgba(138,155,110,0.25)', color: 'var(--mist)', opacity: items.filter((x) => !x.parentId).length === 0 ? 0.4 : 1 }}>
+          <Plus size={14} strokeWidth={2} /> เพิ่มรายการย่อย
+        </button>
+        <div className="ml-auto">
+          <label className="tg-focus tg-navbtn flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium cursor-pointer" style={{ background: 'rgba(201,162,39,0.12)', border: '1px solid rgba(201,162,39,0.3)', color: 'var(--gold)' }}>
+            {aiLoading ? <span className="animate-spin">⏳</span> : <Camera size={14} strokeWidth={1.75} />}
+            {aiLoading ? 'AI กำลังอ่าน...' : 'AI อ่านรูป'}
+            <input type="file" accept="image/*" className="hidden" disabled={aiLoading} onChange={(e) => handleAiImage(e.target.files?.[0])} />
+          </label>
+        </div>
+      </div>
+
+      {/* AI preview — confirm before adding */}
+      {aiPreview && (
+        <div className="mt-4 tg-panel p-4" style={{ background: 'var(--gold-soft)', border: '1px solid rgba(201,162,39,0.35)' }}>
+          <p className="text-sm font-semibold mb-2" style={{ color: 'var(--bone)' }}>AI อ่านรูปได้ {aiPreview.length} รายการ — ตรวจสอบแล้วกดยืนยัน</p>
+          <div className="space-y-1.5 mb-3">
+            {aiPreview.map((x, i) => (
+              <div key={x.id} className="flex items-center gap-3 text-sm">
+                <span className="tg-mono text-xs" style={{ color: 'var(--moss)', minWidth: 20 }}>{i + 1}.</span>
+                <input value={x.description} onChange={(e) => setAiPreview((p) => p.map((it, j) => j === i ? { ...it, description: e.target.value } : it))} className="tg-input tg-focus flex-1 px-2 py-1 text-sm" />
+                <input type="number" value={x.qty} onFocus={(e) => e.target.select()} onChange={(e) => setAiPreview((p) => p.map((it, j) => j === i ? { ...it, qty: Number(e.target.value) } : it))} className="tg-input tg-focus tg-mono w-16 px-2 py-1 text-sm text-center" />
+                <input value={x.unit} onChange={(e) => setAiPreview((p) => p.map((it, j) => j === i ? { ...it, unit: e.target.value } : it))} className="tg-input tg-focus w-16 px-2 py-1 text-sm text-center" />
+                <input type="number" value={x.price} onFocus={(e) => e.target.select()} onChange={(e) => setAiPreview((p) => p.map((it, j) => j === i ? { ...it, price: Number(e.target.value) } : it))} className="tg-input tg-focus tg-mono w-24 px-2 py-1 text-sm" placeholder="ราคา" />
+                <button onClick={() => setAiPreview((p) => p.filter((_, j) => j !== i))} className="tg-focus tg-navbtn p-1.5 rounded-lg shrink-0" style={{ color: 'var(--rust)' }} title="ลบรายการนี้">
                   <Trash2 size={14} strokeWidth={1.75} />
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <button
-        onClick={add}
-        className="tg-focus tg-navbtn flex items-center gap-1.5 px-3 py-2 mt-3 rounded-lg text-xs font-medium"
-        style={{ background: 'var(--sage-soft)', border: '1px solid rgba(217,142,92,0.25)', color: 'var(--sage)' }}
-      >
-        <Plus size={14} strokeWidth={2} /> เพิ่มรายการ
-      </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button onClick={confirmAi} className="tg-focus tg-navbtn flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium" style={{ background: 'var(--sage)', color: '#fff' }}>
+              <CheckCircle2 size={14} strokeWidth={1.75} /> ยืนยันเพิ่มรายการ
+            </button>
+            <button onClick={() => setAiPreview(null)} className="tg-focus tg-navbtn px-4 py-2 rounded-lg text-sm" style={{ border: '1px solid var(--line)', color: 'var(--moss)' }}>
+              ยกเลิก
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-/* ============================================================
-   DOCUMENT PREVIEW / PRINT — matches the official docx layout
-   ============================================================ */
+const CompanySearchSelect = ({ value, onChange, items, allowAllLabel, placeholder = 'ค้นหาบริษัท...' }) => {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const list = items || projectsData;
+  const selected = list.find((p) => p.id === value);
+  const q = query.trim().toLowerCase();
+  // Group by customer
+  const companies = [...new Set(list.map((p) => p.customer || 'ไม่ระบุบริษัท'))];
+  const filtered = companies.filter((c) => {
+    if (!q) return true;
+    return c.toLowerCase().includes(q) || list.filter((p) => (p.customer || 'ไม่ระบุบริษัท') === c).some((p) => p.name.toLowerCase().includes(q));
+  });
+
+  return (
+    <div className="relative" style={{ minWidth: 240 }}
+      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) { setOpen(false); setQuery(''); } }}
+    >
+      <button type="button" onClick={() => setOpen((o) => !o)}
+        className="tg-input tg-focus w-full flex items-center justify-between gap-2 px-3 py-2.5 text-sm text-left"
+      >
+        <span className="flex items-center gap-2 truncate">
+          <Search size={14} strokeWidth={1.75} style={{ color: 'var(--moss)', flexShrink: 0 }} />
+          <span className="truncate" style={{ color: selected ? 'var(--bone)' : 'var(--moss)' }}>
+            {value === 'all' ? allowAllLabel : selected ? (selected.customer || selected.name) : placeholder}
+          </span>
+        </span>
+        <ChevronDown size={14} strokeWidth={1.75} style={{ color: 'var(--moss)', flexShrink: 0 }} />
+      </button>
+      {open && (
+        <div className="tg-menu tg-scroll" onMouseDown={(e) => e.preventDefault()} style={{ maxHeight: 360, overflowY: 'auto' }}>
+          <div className="p-2" style={{ borderBottom: '1px solid var(--line)' }}>
+            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)}
+              placeholder="พิมพ์ชื่อบริษัทหรือโครงการ..."
+              className="tg-input tg-focus w-full px-2.5 py-1.5 text-sm"
+            />
+          </div>
+          {allowAllLabel && (
+            <div className={`tg-menu-item ${value === 'all' ? 'tg-menu-item-active' : ''}`}
+              onClick={() => { onChange('all'); setOpen(false); setQuery(''); }}
+            >
+              <p className="font-medium">{allowAllLabel}</p>
+            </div>
+          )}
+          {filtered.map((company) => {
+            const companyProjects = list.filter((p) => (p.customer || 'ไม่ระบุบริษัท') === company);
+            return (
+              <div key={company}>
+                <div className="px-3 py-1.5" style={{ background: 'rgba(217,142,92,0.06)', borderBottom: '1px solid var(--line)' }}>
+                  <p className="text-xs font-semibold" style={{ color: 'var(--sage)' }}>{company}</p>
+                </div>
+                {companyProjects.map((p) => (
+                  <div key={p.id}
+                    className={`tg-menu-item ${p.id === value ? 'tg-menu-item-active' : ''}`}
+                    onClick={() => { onChange(p.id); setOpen(false); setQuery(''); }}
+                    style={{ paddingLeft: '1.5rem' }}
+                  >
+                    <p className="font-medium truncate" style={{ fontSize: 13 }}>{p.name}</p>
+                    <p className="text-xs tg-mono" style={{ color: 'var(--moss)' }}>{p.id}</p>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+          {filtered.length === 0 && <div className="tg-menu-item" style={{ color: 'var(--moss)' }}>ไม่พบบริษัท/โครงการ</div>}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
 const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, onClose }) => {
   const entity = ENTITIES[doc.entity];
-  const copies = stage === 'tax_invoice' ? ['ต้นฉบับ', 'สำเนา'] : [copyLabel];
+  const copies = (stage === 'tax_invoice' || stage === 'receipt') ? ['ต้นฉบับ', 'สำเนา'] : [copyLabel];
+  const branchSuffix = formData.branchType === 'branch' && formData.branchName
+    ? `(สาขา ${formData.branchName})`
+    : '(สำนักงานใหญ่)';
+  const showBranchSuffix = stage === 'tax_invoice' || stage === 'receipt';
+  const checkDetail = [formData.checkBank, formData.checkNo && `เลขที่ ${formData.checkNo}`, formData.checkDate && fmtDate(formData.checkDate)].filter(Boolean).join(' · ');
 
   return (
     <div className="tg-modal-backdrop">
@@ -1355,29 +1647,38 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
           </div>
           <div className="text-right shrink-0">
             <p className="text-xs tg-mono" style={{ color: 'var(--moss)' }}>{formData.docNo}</p>
+            {label && (
+              <span className="tg-badge inline-block mt-1.5" style={{ fontSize: 11, padding: '0.25rem 0.75rem', fontWeight: 600, background: 'var(--gold-soft)', color: 'var(--gold)' }}>{label}</span>
+            )}
           </div>
         </div>
 
         {/* Title */}
-        <div className="text-center my-4">
-          <span className="tg-badge tg-badge-sage" style={{ fontSize: 14, padding: '0.4rem 1.25rem', fontWeight: 700 }}>{DOC_TITLES[stage]}</span>
-          {label && (
-            <span className="tg-badge" style={{ fontSize: 12, padding: '0.3rem 1rem', fontWeight: 600, marginLeft: 8, background: 'var(--gold-soft)', color: 'var(--gold)' }}>{label}</span>
-          )}
+        <div className="flex justify-center my-3">
+          <div className="text-center" style={{
+            padding: '0.5rem 1.75rem', borderRadius: '0.75rem',
+            background: 'var(--sage-soft)', color: 'var(--sage)',
+            border: '1px solid rgba(217,142,92,0.25)',
+          }}>
+            <p style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.5, display: 'block' }}>{DOC_TITLES[stage]}</p>
+            <p className="tg-mono" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', lineHeight: 1.5, display: 'block' }}>{DOC_TITLES_EN[stage]}</p>
+          </div>
         </div>
 
         {/* Customer info — left block aligns with item column, right block aligns with price columns */}
         <div className="tg-doc-info">
           <div className="tg-doc-left">
-            <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ชื่อลูกค้า</span><span style={{ color: 'var(--bone)' }}>{project.contact}</span></div>
-            <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ชื่อบริษัท</span><span style={{ color: 'var(--bone)' }}>{project.customer}</span></div>
+            {stage === 'quotation' && (
+              <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ชื่อลูกค้า</span><span style={{ color: 'var(--bone)' }}>{project.contact}</span></div>
+            )}
+            <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ชื่อบริษัท</span><span style={{ color: 'var(--bone)' }}>{project.customer}{showBranchSuffix && ` ${branchSuffix}`}</span></div>
+            <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ที่อยู่</span><span style={{ color: 'var(--bone)' }}>{project.address}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>TaxID</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{project.taxId}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>โครงการ</span><span style={{ color: 'var(--bone)' }}>{doc.projectName}</span></div>
-            <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ที่อยู่</span><span style={{ color: 'var(--bone)' }}>{project.address}</span></div>
           </div>
           <div className="tg-doc-right">
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>เลขที่</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.docNo}</span></div>
-            <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>วันที่</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.docDate}</span></div>
+            <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>วันที่</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{fmtDate(formData.docDate)}</span></div>
             {stage === 'quotation' && (
               <>
                 <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ยืนราคา</span><span style={{ color: 'var(--bone)' }}>{formData.validity}</span></div>
@@ -1387,17 +1688,18 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
             {stage === 'billing' && (
               <>
                 <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>อ้างอิง</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.qtRef}</span></div>
-                <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ครบกำหนด</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.dueDate}</span></div>
+                <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ครบกำหนด</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{fmtDate(formData.dueDate)}</span></div>
               </>
             )}
             {stage === 'tax_invoice' && (
-              <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>อ้างอิง</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.invRef}</span></div>
+              <>
+                <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>อ้างอิง</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.invRef}</span></div>
+                {formData.poRef && <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>PO Ref</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.poRef}</span></div>}
+                {formData.poDate && <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>วันที่ PO</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{fmtDate(formData.poDate)}</span></div>}
+              </>
             )}
             {stage === 'receipt' && (
-              <>
-                <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ชำระโดย</span><span style={{ color: 'var(--bone)' }}>{formData.payMethod}</span></div>
-                <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>บิลอ้างอิง</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.invRef}</span></div>
-              </>
+              <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>บิลอ้างอิง</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.invRef}</span></div>
             )}
           </div>
         </div>
@@ -1415,16 +1717,32 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
             </tr>
           </thead>
           <tbody>
-            {formData.lineItems.map((it, i) => (
+            {formData.lineItems.map((it, i) => {
+              // compute display number (1, 1.1, 2, 2.1...)
+              const getNum = (idx) => {
+                const item = formData.lineItems[idx];
+                if (!item.parentId) {
+                  let n = 0; for (let j = 0; j <= idx; j++) { if (!formData.lineItems[j].parentId) n++; } return String(n);
+                } else {
+                  const pIdx = formData.lineItems.findIndex((x) => x.id === item.parentId);
+                  const pNum = pIdx >= 0 ? getNum(pIdx) : '?';
+                  let sub = 0; for (let j = 0; j <= idx; j++) { if (formData.lineItems[j].parentId === item.parentId) sub++; }
+                  return `${pNum}.${sub}`;
+                }
+              };
+              const num = getNum(i);
+              const isSub = !!it.parentId;
+              return (
               <tr key={it.id}>
-                <td className="py-1.5 px-2 text-center" style={{ border: '1px solid var(--line)', color: 'var(--bone)' }}>{i + 1}</td>
-                <td className="py-1.5 px-2" style={{ border: '1px solid var(--line)', color: 'var(--bone)' }}>{it.description}</td>
+                <td className="py-1.5 px-2 text-center" style={{ border: '1px solid var(--line)', color: 'var(--bone)', fontSize: isSub ? 11 : 13 }}>{num}</td>
+                <td className="py-1.5 px-2" style={{ border: '1px solid var(--line)', color: 'var(--bone)', paddingLeft: isSub ? '1.5rem' : undefined }}>{it.description}</td>
                 <td className="py-1.5 px-2 text-center tg-mono" style={{ border: '1px solid var(--line)', color: 'var(--bone)' }}>{it.qty}</td>
                 <td className="py-1.5 px-2 text-center" style={{ border: '1px solid var(--line)', color: 'var(--bone)' }}>{it.unit}</td>
                 <td className="py-1.5 px-2 text-right tg-mono" style={{ border: '1px solid var(--line)', color: 'var(--bone)' }}>{fmtTHB(Number(it.price) || 0)}</td>
                 <td className="py-1.5 px-2 text-right tg-mono" style={{ border: '1px solid var(--line)', color: 'var(--bone)' }}>{fmtTHB((Number(it.qty) || 0) * (Number(it.price) || 0))}</td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
 
@@ -1445,22 +1763,71 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
           </div>
         </div>
 
-        {/* Signatures */}
-        <div className="grid grid-cols-2 gap-10 mt-10 text-center text-xs" style={{ color: 'var(--moss)' }}>
-          <div>
-            <div className="flex justify-center mb-1" style={{ height: 32 }}>
-              <SignatureMark style={{ height: '100%', width: 'auto' }} />
+        {/* Note (quotation) / Payment method (receipt) — left-aligned block above the signature area */}
+        {stage === 'quotation' && formData.note && (
+          <div className="mt-5 text-xs text-left" style={{ color: 'var(--bone)' }}>
+            <span className="font-semibold">หมายเหตุ: </span>
+            <span style={{ color: 'var(--moss)' }}>{formData.note}</span>
+          </div>
+        )}
+        {stage === 'receipt' && (
+          <div className="mt-5 text-xs text-left" style={{ color: 'var(--bone)' }}>
+            <p className="font-semibold mb-1.5">ชำระโดย</p>
+            <div className="space-y-1">
+              <p className="flex items-center gap-1.5">
+                <span style={{ display: 'inline-block', width: 12, height: 12, border: '1px solid var(--bone)', textAlign: 'center', lineHeight: '11px', fontSize: 9 }}>{formData.payMethod === 'เงินสด' ? '✓' : ''}</span>
+                เงินสด
+              </p>
+              <p className="flex items-center gap-1.5">
+                <span style={{ display: 'inline-block', width: 12, height: 12, border: '1px solid var(--bone)', textAlign: 'center', lineHeight: '11px', fontSize: 9 }}>{formData.payMethod === 'โอนเงินผ่านธนาคาร' ? '✓' : ''}</span>
+                โอนเงินผ่านธนาคาร
+              </p>
+              <p className="flex items-center gap-1.5">
+                <span style={{ display: 'inline-block', width: 12, height: 12, border: '1px solid var(--bone)', textAlign: 'center', lineHeight: '11px', fontSize: 9 }}>{formData.payMethod === 'เช็ค' ? '✓' : ''}</span>
+                เช็ค{formData.payMethod === 'เช็ค' && checkDetail && <span style={{ color: 'var(--moss)' }}> — {checkDetail}</span>}
+              </p>
             </div>
-            <p style={{ borderTop: '1px solid var(--line-strong)', paddingTop: 6 }}>( {entity.signatory} )</p>
-            <p className="mt-1">ผู้ออกเอกสาร · โทร {entity.phone}</p>
-            <p>{entity.name}</p>
           </div>
-          <div>
-            <p className="mb-1">&nbsp;</p>
-            <p style={{ borderTop: '1px solid var(--line-strong)', paddingTop: 6 }}>( ……………………………… )</p>
-            <p className="mt-1">ผู้รับเอกสาร / วันที่ ………………</p>
+        )}
+
+        {/* Signatures */}
+        {stage === 'receipt' ? (
+          <div className="grid grid-cols-3 gap-6 mt-10 text-center text-xs" style={{ color: 'var(--moss)' }}>
+            <div>
+              <div className="flex justify-center mb-1" style={{ height: 32 }}>
+                {stage === 'quotation' && <SignatureMark style={{ height: '100%', width: 'auto' }} />}
+              </div>
+              <p style={{ borderTop: '1px solid var(--line-strong)', paddingTop: 6 }}>( {entity.signatory} )</p>
+              <p className="mt-1">{DOC_SIGNATORY_ROLE[stage]}</p>
+            </div>
+            <div>
+              <div className="mb-1" style={{ height: 32 }} />
+              <p style={{ borderTop: '1px solid var(--line-strong)', paddingTop: 6 }}>( ……………………………… )</p>
+              <p className="mt-1">ผู้มีอำนาจลงนาม</p>
+            </div>
+            <div>
+              <div className="mb-1" style={{ height: 32 }} />
+              <p style={{ borderTop: '1px solid var(--line-strong)', paddingTop: 6 }}>( ……………………………… )</p>
+              <p className="mt-1">ผู้รับเอกสาร / วันที่ ………………</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-10 mt-10 text-center text-xs" style={{ color: 'var(--moss)' }}>
+            <div>
+              <div className="flex justify-center mb-1" style={{ height: 32 }}>
+                {stage === 'quotation' && <SignatureMark style={{ height: '100%', width: 'auto' }} />}
+              </div>
+              <p style={{ borderTop: '1px solid var(--line-strong)', paddingTop: 6 }}>( {entity.signatory} )</p>
+              <p className="mt-1">{DOC_SIGNATORY_ROLE[stage]} · โทร {entity.phone}</p>
+              <p>{entity.name}</p>
+            </div>
+            <div>
+              <div className="mb-1" style={{ height: 32 }} />
+              <p style={{ borderTop: '1px solid var(--line-strong)', paddingTop: 6 }}>( ……………………………… )</p>
+              <p className="mt-1">ผู้รับเอกสาร / วันที่ ………………</p>
+            </div>
+          </div>
+        )}
         </div>
         ))}
 
@@ -1615,17 +1982,28 @@ const MobileNav = ({ page, setPage }) => (
    PAGE 1 — EXECUTIVE DASHBOARD
    ============================================================ */
 const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
-  const [projectFilter, setProjectFilter] = useState('all');
+  const [companyFilter, setCompanyFilter] = useState('all');
   const [activeTab, setActiveTab] = useState('alerts');
   const adjustedYtd = ytdRevenue + extraRevenue / 1000000;
-  const filteredOutstanding = projectFilter === 'all'
-    ? outstandingByProject
-    : outstandingByProject.filter((g) => g.projectId === projectFilter);
+
+  // Projects for selected company
+  const companyProjects = companyFilter === 'all'
+    ? projectsData
+    : projectsData.filter((p) => (p.customer || 'ไม่ระบุ') === companyFilter);
+
+  const companyProjectIds = companyProjects.map((p) => p.id);
+  const filteredOutstanding = outstandingByProject.filter((g) =>
+    companyFilter === 'all' || companyProjectIds.includes(g.projectId)
+  );
   const filteredTotal = filteredOutstanding.reduce((sum, g) => sum + g.items.reduce((s, i) => s + i.amount, 0), 0);
   const filteredDocs = filteredOutstanding.reduce((sum, g) => sum + g.items.length, 0);
   const filteredOverdue = filteredOutstanding.reduce((sum, g) => sum + g.items.filter((i) => i.status === 'overdue').length, 0);
-  const selectedProject = projectFilter !== 'all' ? projectsData.find((p) => p.id === projectFilter) : null;
-  const selectedProjectDocs = selectedProject ? documentsData.filter((d) => d.projectId === selectedProject.id) : [];
+  const totalCompanyValue = companyProjects.reduce((s, p) => s + (p.value || 0), 0);
+  const totalDirectCost = companyProjects.reduce((s, p) => s + (directCosts[p.id] || 0), 0);
+
+  // All unique company names for dropdown
+  const allCompanies = [...new Set(projectsData.map((p) => p.customer || 'ไม่ระบุ'))];
+
   return (
   <div className="relative p-6 md:p-10 max-w-7xl mx-auto">
     <div className="absolute top-0 right-0 pointer-events-none opacity-5 hidden lg:block" aria-hidden="true">
@@ -1639,13 +2017,20 @@ const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
         <p className="text-sm mt-1" style={{ color: 'var(--moss)' }}>บริษัท แต้มบุญ การ์เด้น จำกัด · ทุกนิติบุคคล</p>
       </div>
       <div className="flex flex-wrap gap-3 items-center justify-end ml-auto">
-        <ProjectSearchSelect
-          value={projectFilter}
-          onChange={setProjectFilter}
-          allowAllLabel="ทุกโครงการ"
-          items={projectsData}
-          placeholder="ค้นหาโครงการ..."
-        />
+        {/* Company-only dropdown */}
+        <div className="relative" style={{ minWidth: 220 }}>
+          <select
+            value={companyFilter}
+            onChange={(e) => setCompanyFilter(e.target.value)}
+            className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2.5 text-sm"
+          >
+            <option value="all">ทุกบริษัท / ลูกค้าทั้งหมด</option>
+            {allCompanies.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
+        </div>
         <div className="tg-panel px-4 py-2.5 text-sm shrink-0 whitespace-nowrap flex items-center justify-center gap-2 sm:w-auto" style={{ color: 'var(--moss)' }}>
           <Calendar size={14} strokeWidth={1.75} style={{ color: 'var(--sage)' }} />
           ข้อมูล ณ <span className="tg-mono" style={{ color: 'var(--bone)' }}>11 มิ.ย. 2026</span>
@@ -1662,14 +2047,14 @@ const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
       </div>
     )}
 
-    {/* Key metrics — always visible, 4 compact cards in a row, reactive to project filter */}
+    {/* Key metrics */}
     <div className="relative grid grid-cols-4 gap-3 mb-6">
-      {selectedProject ? (
+      {companyFilter !== 'all' ? (
         <>
-          <KPICard compact icon={Wallet} accent="sage" label="มูลค่าโครงการ" value={`${fmtTHB(selectedProject.value)} บาท`} sub={selectedProject.name} />
+          <KPICard compact icon={Wallet} accent="sage" label="มูลค่ารวมทุกโครงการ" value={`${fmtTHB(totalCompanyValue)} บาท`} sub={`${companyProjects.length} โครงการ · ${companyFilter}`} />
           <KPICard compact icon={Receipt} accent="gold" label="ยอดใบวางบิลคงค้าง" value={`${fmtTHB(filteredTotal)} บาท`} sub={`${filteredDocs} รายการ · เลยกำหนด ${filteredOverdue}`} />
-          <KPICard compact icon={Briefcase} accent="mist" label="สถานะโครงการ" value={selectedProject.status === 'active' ? 'กำลังดำเนินการ' : selectedProject.status === 'completed' ? 'เสร็จสิ้น' : selectedProject.status} sub={`เริ่ม ${selectedProject.start}`} />
-          <KPICard compact icon={FileText} accent="sage" label="เอกสารที่ออกแล้ว" value={`${selectedProjectDocs.length} ฉบับ`} sub={`โครงการ ${selectedProject.id}`} />
+          <KPICard compact icon={TrendingUp} accent="sage" label="กำไรขั้นต้น (ประมาณ)" value={`${fmtTHB(Math.max(0, totalCompanyValue - totalDirectCost))} บาท`} sub={totalCompanyValue > 0 ? `อัตรา ${((1 - totalDirectCost / totalCompanyValue) * 100).toFixed(1)}%` : '—'} />
+          <KPICard compact icon={TrendingDown} accent="rust" label="รายจ่ายรวม (Direct Cost)" value={`${fmtTHB(totalDirectCost)} บาท`} sub="จากบันทึกหน้างาน" />
         </>
       ) : (
         <>
@@ -1681,19 +2066,55 @@ const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
       )}
     </div>
 
-    {selectedProject && (() => {
-      const directCost = directCosts[selectedProject.id] || 0;
-      const revenue = selectedProject.value;
-      const profit = revenue - directCost;
-      return (
-        <div className="relative grid grid-cols-4 gap-3 mb-6">
-          <KPICard compact icon={Wallet} accent="sage" label="รายรับ" value={`${fmtTHB(revenue)} บาท`} sub="มูลค่าโครงการ (สัญญา)" />
-          <KPICard compact icon={TrendingDown} accent="rust" label="รายจ่าย" value={`${fmtTHB(directCost)} บาท`} sub="Direct Cost จากบันทึกหน้างาน" />
-          <KPICard compact icon={TrendingUp} accent="sage" label="กำไร" value={`${fmtTHB(Math.max(0, profit))} บาท`} sub={profit >= 0 ? 'กำไรขั้นต้นโดยประมาณ' : '— ไม่มีกำไร —'} />
-          <KPICard compact icon={TrendingDown} accent="rust" label="ขาดทุน" value={`${fmtTHB(Math.max(0, -profit))} บาท`} sub={profit < 0 ? 'รายจ่ายเกินรายรับ' : '— ไม่ขาดทุน —'} />
+    {/* When company is selected — show all its projects */}
+    {companyFilter !== 'all' && (
+      <div className="tg-panel p-5 mb-6">
+        <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--bone)' }}>โครงการของ {companyFilter}</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
+            <thead>
+              <tr className="text-left text-xs uppercase" style={{ color: 'var(--moss)', borderBottom: '1px solid var(--line)' }}>
+                <th className="pb-2 pr-4 font-medium">โครงการ</th>
+                <th className="pb-2 pr-4 font-medium text-right">มูลค่า (บาท)</th>
+                <th className="pb-2 pr-4 font-medium text-right">Direct Cost (บาท)</th>
+                <th className="pb-2 pr-4 font-medium text-right">กำไร (บาท)</th>
+                <th className="pb-2 font-medium">สถานะ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {companyProjects.map((p) => {
+                const dc = directCosts[p.id] || 0;
+                const profit = p.value - dc;
+                const docs = documentsData.filter((d) => d.projectId === p.id);
+                return (
+                  <tr key={p.id} style={{ borderBottom: '1px solid var(--line)' }}>
+                    <td className="py-2.5 pr-4">
+                      <p className="font-medium" style={{ color: 'var(--bone)' }}>{p.name}</p>
+                      <p className="text-xs tg-mono" style={{ color: 'var(--moss)' }}>{p.id} · {docs.length} เอกสาร</p>
+                    </td>
+                    <td className="py-2.5 pr-4 text-right tg-mono" style={{ color: 'var(--bone)' }}>{fmtTHB(p.value)}</td>
+                    <td className="py-2.5 pr-4 text-right tg-mono" style={{ color: dc > 0 ? 'var(--rust)' : 'var(--moss)' }}>{fmtTHB(dc)}</td>
+                    <td className="py-2.5 pr-4 text-right tg-mono font-semibold" style={{ color: profit >= 0 ? 'var(--sage)' : 'var(--rust)' }}>{fmtTHB(profit)}</td>
+                    <td className="py-2.5">
+                      <ProjectStatusBadge status={p.status} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr style={{ borderTop: '2px solid var(--line-strong)' }}>
+                <td className="py-2 pr-4 font-semibold" style={{ color: 'var(--bone)' }}>รวมทั้งหมด</td>
+                <td className="py-2 pr-4 text-right tg-mono font-semibold" style={{ color: 'var(--bone)' }}>{fmtTHB(totalCompanyValue)}</td>
+                <td className="py-2 pr-4 text-right tg-mono font-semibold" style={{ color: 'var(--rust)' }}>{fmtTHB(totalDirectCost)}</td>
+                <td className="py-2 pr-4 text-right tg-mono font-semibold" style={{ color: 'var(--gold)' }}>{fmtTHB(totalCompanyValue - totalDirectCost)}</td>
+                <td />
+              </tr>
+            </tfoot>
+          </table>
         </div>
-      );
-    })()}
+      </div>
+    )}
 
     {/* Sections as tabs — avoid long scrolling */}
     <Tabs
@@ -1785,7 +2206,7 @@ const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
           <p className="text-xs mt-0.5" style={{ color: 'var(--moss)' }}>{filteredOutstanding.length} โครงการ · {filteredDocs} เอกสาร</p>
         </div>
         <div className="text-right">
-          <p className="text-xs" style={{ color: 'var(--moss)' }}>ยอดรวม{projectFilter === 'all' ? 'ทั้งหมด' : 'ของโครงการนี้'}</p>
+          <p className="text-xs" style={{ color: 'var(--moss)' }}>ยอดรวม{companyFilter === 'all' ? 'ทั้งหมด' : 'ของบริษัทนี้'}</p>
           <p className="text-lg font-semibold tg-mono" style={{ color: 'var(--gold)' }}>{fmtTHB(filteredTotal)} <span className="text-xs font-normal" style={{ color: 'var(--moss)' }}>บาท</span></p>
         </div>
       </div>
@@ -1849,51 +2270,60 @@ const ExecutiveDashboard = ({ extraRevenue = 0, directCosts = {} }) => {
    PAGE 2 — CRM & PROJECT EXPLORER
    ============================================================ */
 const CRMProjectExplorer = () => {
-  const [projects, setProjects] = useState(projectsData);
-  const [selectedId, setSelectedId] = useState(projectsData[0].id);
-  useEffect(() => {
-    fetch('/api/sheets/projects').then(r => r.ok ? r.json() : null).then(d => { if (Array.isArray(d) && d.length) { setProjects(d.map(p => ({ ...p, value: Number(p.value) || 0 }))); setSelectedId(d[0].id); } }).catch(() => {});
-  }, []);
-  const [entity, setEntity] = useState(projectsData[0].entity);
-  const [activeDetailTab, setActiveDetailTab] = useState('entity');
+  const [projects, setProjects] = useState(() => {
+    // Auto-create a blank new project on first open
+    const newId = 'PRJ-NEW-001';
+    const blank = { id: newId, name: '', customer: '', contact: '', taxId: '', value: 0, address: '', status: 'active', start: '11/06/2026', entity: 'entity1' };
+    return [blank, ...projectsData];
+  });
+  const [selectedId, setSelectedId] = useState('PRJ-NEW-001');
+  const [companyFilter, setCompanyFilter] = useState('all');
+  const [entity, setEntity] = useState('entity1');
+  const [activeDetailTab, setActiveDetailTab] = useState('customer');
+  const [savedNotice, setSavedNotice] = useState(false);
 
   const project = projects.find((p) => p.id === selectedId);
   const revisions = revisionHistoryData[selectedId] || [];
+  const allCompanies = [...new Set(projects.filter((p) => p.customer).map((p) => p.customer))];
+  const filteredProjects = companyFilter === 'all' ? projects : projects.filter((p) => (p.customer || '') === companyFilter);
 
   const handleSelect = (id) => {
     setSelectedId(id);
     const p = projects.find((pr) => pr.id === id);
-    setEntity(p.entity);
+    if (p) setEntity(p.entity || 'entity1');
   };
 
   const updateProject = (field, value) => {
-    setProjects((prev) => {
-      const updated = prev.map((p) => (p.id === selectedId ? { ...p, [field]: value } : p));
-      const proj = updated.find(p => p.id === selectedId);
-      if (proj) fetch('/api/sheets/projects', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(proj) }).catch(() => {});
-      return updated;
-    });
+    setProjects((prev) => prev.map((p) => (p.id === selectedId ? { ...p, [field]: value } : p)));
+  };
+
+  const handleSaveProject = () => {
+    setSavedNotice(true);
+    setTimeout(() => setSavedNotice(false), 2500);
   };
 
   const handleNewProject = () => {
     const n = projects.length + 1;
     const newId = `PRJ-NEW-${String(n).padStart(3, '0')}`;
+    // If a company is selected, auto-fill its details from the first matching project
+    const existingProject = companyFilter !== 'all'
+      ? projects.find((p) => (p.customer || '') === companyFilter)
+      : null;
     const newProject = {
       id: newId,
-      name: 'โครงการใหม่ (ยังไม่ระบุชื่อ)',
-      customer: '',
-      contact: '',
-      taxId: '',
+      name: '',
+      customer: existingProject?.customer || '',
+      contact: existingProject?.contact || '',
+      taxId: existingProject?.taxId || '',
+      address: existingProject?.address || '',
       value: 0,
-      address: '',
       status: 'active',
       start: '11/06/2026',
-      entity: 'entity1',
+      entity: existingProject?.entity || 'entity1',
     };
     setProjects((prev) => [newProject, ...prev]);
-    fetch('/api/sheets/projects', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newProject) }).catch(() => {});
     setSelectedId(newId);
-    setEntity('entity1');
+    setEntity(newProject.entity);
     setActiveDetailTab('customer');
   };
 
@@ -1906,12 +2336,38 @@ const CRMProjectExplorer = () => {
           <p className="text-sm mt-1" style={{ color: 'var(--moss)' }}>ทั้งหมด {projects.length} โครงการ</p>
         </div>
         <div className="flex flex-wrap gap-3 items-center justify-end ml-auto">
-          <ProjectSearchSelect value={selectedId} onChange={handleSelect} items={projects} placeholder="ค้นหาโครงการ..." />
+          <div className="relative" style={{ minWidth: 220 }}>
+            <select
+              value={companyFilter}
+              onChange={(e) => setCompanyFilter(e.target.value)}
+              className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2.5 text-sm"
+            >
+              <option value="all">ลูกค้าทั้งหมด</option>
+              {allCompanies.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
+          </div>
+          <button
+            onClick={handleSaveProject}
+            className="tg-focus tg-navbtn flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium shrink-0"
+            style={{ background: 'var(--sage)', color: '#fff', borderRadius: '0.75rem' }}
+          >
+            <Check size={16} strokeWidth={1.75} /> บันทึกลูกค้า
+          </button>
           <button onClick={handleNewProject} className="tg-focus tg-panel tg-navbtn flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium shrink-0" style={{ color: 'var(--sage)' }}>
             <Plus size={16} strokeWidth={1.75} /> โครงการใหม่
           </button>
         </div>
       </div>
+
+      {savedNotice && (
+        <div className="flex items-center gap-2.5 tg-panel p-3.5 mb-4" style={{ borderColor: 'rgba(217,142,92,0.3)', background: 'var(--sage-soft)' }}>
+          <CheckCircle2 size={16} strokeWidth={1.75} style={{ color: 'var(--sage)', flexShrink: 0 }} />
+          <p className="text-sm" style={{ color: 'var(--bone)' }}>บันทึกข้อมูลลูกค้า/โครงการ <strong>{project?.name}</strong> เรียบร้อยแล้ว</p>
+        </div>
+      )}
 
       <div className="tg-split tg-85-15">
         {/* Customer info — primary card */}
@@ -1928,7 +2384,10 @@ const CRMProjectExplorer = () => {
               <User size={14} strokeWidth={1.75} style={{ color: 'var(--mist)' }} /> ข้อมูลลูกค้า
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-              <FormField label="ชื่อโครงการ" value={project.name} onChange={(e) => updateProject('name', e.target.value)} icon={FolderKanban} full />
+              {/* ชื่อโครงการ — เว้นว่างให้ผู้ใช้กรอก */}
+              <FormField label="ชื่อโครงการ" value={project.name} onChange={(e) => updateProject('name', e.target.value)} icon={FolderKanban} full placeholder="พิมพ์ชื่อโครงการ..." />
+
+              {/* ข้อมูลบริษัท — เติมอัตโนมัติในช่องกรอกข้อมูล */}
               <FormField label="ชื่อลูกค้า / นิติบุคคล" value={project.customer} onChange={(e) => updateProject('customer', e.target.value)} icon={Building2} full />
               <FormField label="ผู้ติดต่อ" value={project.contact} onChange={(e) => updateProject('contact', e.target.value)} icon={User} full />
               <FormField label="เลขประจำตัวผู้เสียภาษี" value={project.taxId} onChange={(e) => updateProject('taxId', e.target.value)} icon={Hash} mono />
@@ -1958,23 +2417,34 @@ const CRMProjectExplorer = () => {
                     className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2.5 text-sm"
                   >
                     <option value="entity1">Entity 1 — {ENTITIES.entity1.name}</option>
-                    <option value="entity2">Entity 2 — {ENTITIES.entity2.branch}</option>
+                    <option value="entity2">Entity 2 — {ENTITIES.entity2.branch} (บริษัทอื่น)</option>
                   </select>
                   <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
                 </div>
-                <div className="flex items-center justify-between mt-3 pt-3 text-xs" style={{ borderTop: '1px solid var(--line)', color: 'var(--moss)' }}>
-                  <span>เลขผู้เสียภาษีของนิติบุคคล</span>
-                  <span className="tg-mono" style={{ color: 'var(--bone)' }}>{ENTITIES[entity].taxId}</span>
-                </div>
-                <div className="flex items-center justify-between mt-2 pt-2 text-xs" style={{ borderTop: '1px solid var(--line)', color: 'var(--moss)' }}>
-                  <span>ชื่อนิติบุคคล (TH)</span>
-                  <span style={{ color: 'var(--bone)' }}>{ENTITIES[entity].name}</span>
-                </div>
-                {ENTITIES[entity].nameEn && (
-                  <div className="flex items-center justify-between mt-2 pt-2 text-xs" style={{ borderTop: '1px solid var(--line)', color: 'var(--moss)' }}>
-                    <span>ชื่อนิติบุคคล (EN)</span>
-                    <span className="tg-mono" style={{ color: 'var(--bone)' }}>{ENTITIES[entity].nameEn}</span>
+                {entity === 'entity2' && (
+                  <div className="mt-3 space-y-3">
+                    <FormField label="ชื่อบริษัทอื่น / ซับคอนแทรค" value={project?.customEntityName || ''} onChange={(e) => updateProject('customEntityName', e.target.value)} icon={Building2} />
+                    <FormField label="ที่อยู่" value={project?.customEntityAddress || ''} onChange={(e) => updateProject('customEntityAddress', e.target.value)} icon={MapPin} area />
+                    <FormField label="เลขผู้เสียภาษี" value={project?.customEntityTaxId || ''} onChange={(e) => updateProject('customEntityTaxId', e.target.value)} icon={Hash} mono />
                   </div>
+                )}
+                {entity !== 'entity2' && (
+                  <>
+                    <div className="flex items-center justify-between mt-3 pt-3 text-xs" style={{ borderTop: '1px solid var(--line)', color: 'var(--moss)' }}>
+                      <span>เลขผู้เสียภาษีของนิติบุคคล</span>
+                      <span className="tg-mono" style={{ color: 'var(--bone)' }}>{ENTITIES[entity].taxId}</span>
+                    </div>
+                    <div className="flex items-center justify-between mt-2 pt-2 text-xs" style={{ borderTop: '1px solid var(--line)', color: 'var(--moss)' }}>
+                      <span>ชื่อนิติบุคคล (TH)</span>
+                      <span style={{ color: 'var(--bone)' }}>{ENTITIES[entity].name}</span>
+                    </div>
+                    {ENTITIES[entity].nameEn && (
+                      <div className="flex items-center justify-between mt-2 pt-2 text-xs" style={{ borderTop: '1px solid var(--line)', color: 'var(--moss)' }}>
+                        <span>ชื่อนิติบุคคล (EN)</span>
+                        <span className="tg-mono" style={{ color: 'var(--bone)' }}>{ENTITIES[entity].nameEn}</span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
@@ -1996,8 +2466,39 @@ const CRMProjectExplorer = () => {
           </div>
         </div>
 
-        {/* Right column — revision history */}
+        {/* Right column — all projects + revision history */}
         <div className="flex flex-col gap-5">
+          <div className="tg-panel">
+            <div className="p-4" style={{ borderBottom: '1px solid var(--line)' }}>
+              <h3 className="flex items-center gap-2 text-sm font-semibold" style={{ color: 'var(--bone)' }}>
+                <FolderKanban size={14} strokeWidth={1.75} style={{ color: 'var(--sage)' }} /> โครงการทั้งหมด
+              </h3>
+              <p className="text-xs mt-1" style={{ color: 'var(--moss)' }}>{filteredProjects.length} โครงการ{companyFilter !== 'all' ? ` ของ ${companyFilter}` : ''}</p>
+            </div>
+            <div className="p-3 space-y-1.5 tg-scroll" style={{ maxHeight: 320, overflowY: 'auto' }}>
+              {filteredProjects.map((p) => {
+                const active = p.id === selectedId;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => handleSelect(p.id)}
+                    className="tg-focus tg-navbtn w-full text-left p-2.5 rounded-lg flex items-center justify-between gap-2"
+                    style={{
+                      background: active ? 'var(--sage-soft)' : 'transparent',
+                      border: `1px solid ${active ? 'rgba(217,142,92,0.3)' : 'transparent'}`,
+                    }}
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate" style={{ color: active ? 'var(--sage)' : 'var(--bone)' }}>{p.name}</p>
+                      <p className="text-xs tg-mono mt-0.5" style={{ color: 'var(--moss)' }}>{p.id}</p>
+                    </div>
+                    <ProjectStatusBadge status={p.status} />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="tg-panel">
             <div className="p-4" style={{ borderBottom: '1px solid var(--line)' }}>
               <h3 className="flex items-center gap-2 text-sm font-semibold" style={{ color: 'var(--bone)' }}>
@@ -2037,11 +2538,12 @@ const CRMProjectExplorer = () => {
 const DocumentFlow = ({ paidDocIds, togglePaid }) => {
   const [documents, setDocuments] = useState(documentsData);
   const [selectedProjectId, setSelectedProjectId] = useState(documentsData[0].projectId);
-  useEffect(() => {
-    fetch('/api/sheets/documents').then(r => r.ok ? r.json() : null).then(d => { if (Array.isArray(d) && d.length) { setDocuments(d.map(doc => ({ ...doc, base: Number(doc.base) || 0 }))); setSelectedProjectId(d[0].projectId); setSelectedDocId(d[0].id); setViewStage(d[0].currentStage); } }).catch(() => {});
-  }, []);
   const [selectedDocId, setSelectedDocId] = useState(documentsData[0].id);
   const [viewStage, setViewStage] = useState(documentsData[0].currentStage);
+  const [docPhotoPos, setDocPhotoPos] = useState({});
+  const [docPhotoZoom, setDocPhotoZoom] = useState({});
+  const [docPhotos, setDocPhotos] = useState({}); // keyed by docId
+  const [showDocPhotoReport, setShowDocPhotoReport] = useState(false);
   const [formStates, setFormStates] = useState(() => {
     const acc = {};
     documentsData.forEach((d) => {
@@ -2058,6 +2560,14 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
             invRef: s.key === 'receipt' ? (d.docNos.tax_invoice || '') : (d.docNos.billing || ''),
             payMethod: d.payMethod || '',
             charges: { opFee: true, wht: true, vat: true },
+            note: d.note || '',
+            poRef: d.poRef || '',
+            poDate: d.poDate || '',
+            branchType: d.branchType || 'hq',
+            branchName: d.branchName || '',
+            checkBank: d.checkBank || '',
+            checkNo: d.checkNo || '',
+            checkDate: d.checkDate || '',
           };
         }
       });
@@ -2072,7 +2582,7 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
   const doc = projectDocs.find((d) => d.id === selectedDocId) || projectDocs[0];
   const project = projectsData.find((p) => p.id === selectedProjectId);
   const formKey = doc ? `${doc.id}__${viewStage}` : null;
-  const form = (formKey && formStates[formKey]) || { lineItems: [], docNo: '', docDate: '', validity: '', rev: '', dueDate: '', qtRef: '', invRef: '', payMethod: '', charges: { ...DEFAULT_CHARGES } };
+  const form = (formKey && formStates[formKey]) || { lineItems: [], docNo: '', docDate: '', validity: '', rev: '', dueDate: '', qtRef: '', invRef: '', payMethod: '', charges: { ...DEFAULT_CHARGES }, note: '', poRef: '', poDate: '', branchType: 'hq', branchName: '', checkBank: '', checkNo: '', checkDate: '' };
   const isPaid = doc ? paidDocIds.includes(doc.id) : false;
   const stageLabel = DOC_STAGES.find((s) => s.key === viewStage).label;
   const isCurrentStage = doc ? viewStage === doc.currentStage : false;
@@ -2128,6 +2638,14 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
           invRef: stageKey === 'receipt' ? (source?.docNo || '') : (source?.invRef || ''),
           payMethod: source?.payMethod || '',
           charges: source?.charges ? { ...source.charges } : { ...DEFAULT_CHARGES },
+          note: '',
+          poRef: stageKey === 'tax_invoice' ? (source?.poRef || '') : (source?.poRef || ''),
+          poDate: stageKey === 'tax_invoice' ? (source?.poDate || '') : (source?.poDate || ''),
+          branchType: source?.branchType || 'hq',
+          branchName: source?.branchName || '',
+          checkBank: source?.checkBank || '',
+          checkNo: source?.checkNo || '',
+          checkDate: source?.checkDate || '',
         },
       }));
     }
@@ -2152,7 +2670,6 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
       payMethod: '',
     };
     setDocuments((prev) => [...prev, newDoc]);
-    fetch('/api/sheets/documents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newDoc) }).catch(() => {});
     setSelectedDocId(newId);
     setFormStates((prev) => ({
       ...prev,
@@ -2167,6 +2684,14 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
         invRef: '',
         payMethod: '',
         charges: { ...DEFAULT_CHARGES },
+        note: '',
+        poRef: '',
+        poDate: '',
+        branchType: 'hq',
+        branchName: '',
+        checkBank: '',
+        checkNo: '',
+        checkDate: '',
       },
     }));
     setViewStage(stageKey);
@@ -2204,7 +2729,6 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
       payMethod: '',
     };
     setDocuments((prev) => [...prev, newDoc]);
-    fetch('/api/sheets/documents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newDoc) }).catch(() => {});
     setFormStates((prev) => ({
       ...prev,
       [`${newId}__${stageKey}`]: {
@@ -2218,6 +2742,14 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
         invRef: '',
         payMethod: '',
         charges: { ...DEFAULT_CHARGES },
+        note: '',
+        poRef: '',
+        poDate: '',
+        branchType: 'hq',
+        branchName: '',
+        checkBank: '',
+        checkNo: '',
+        checkDate: '',
       },
     }));
     setSelectedDocId(newId);
@@ -2341,6 +2873,15 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
                   </React.Fragment>
                 );
               })}
+              <span style={{ color: 'var(--moss)' }}>·</span>
+              <button
+                onClick={() => setShowDocPhotoReport(true)}
+                className="tg-focus tg-navbtn flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                style={{ background: showDocPhotoReport ? 'var(--sage-soft)' : 'rgba(217,142,92,0.03)', border: '1px solid var(--line)', color: 'var(--sage)' }}
+              >
+                <Camera size={13} strokeWidth={1.75} />
+                ภาพถ่าย {(docPhotos[selectedDocId] || []).length > 0 && `(${(docPhotos[selectedDocId] || []).length})`}
+              </button>
             </div>
 
             {!doc.docNos[viewStage] ? (
@@ -2396,22 +2937,47 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
                     <h3 className="text-sm font-semibold" style={{ color: 'var(--bone)' }}>รายละเอียดเอกสาร — {stageLabel}</h3>
                     <FormField label="เลขที่เอกสาร" value={form.docNo} onChange={updateForm('docNo')} icon={FileText} mono />
                     <p className="text-xs -mt-2" style={{ color: 'var(--moss)' }}>เลขที่เอกสารจะคงเดิม แม้แก้ไขข้อมูลอื่น จนกว่าจะกดบันทึกหรือส่งออก PDF</p>
-                    <FormField label="วันที่" value={form.docDate} onChange={updateForm('docDate')} icon={Calendar} mono />
+                    <FormField label="วันที่" value={form.docDate} onChange={updateForm('docDate')} icon={Calendar} mono type="date" />
                     {viewStage === 'quotation' && (
                       <>
                         <FormField label="ยืนราคา (Validity)" value={form.validity} onChange={updateForm('validity')} icon={Clock} />
                         <FormField label="Rev" value={form.rev} onChange={updateForm('rev')} icon={History} mono />
+                        <FormField label="หมายเหตุ (Note)" value={form.note} onChange={updateForm('note')} icon={FileText} area />
                       </>
                     )}
                     {viewStage === 'billing' && (
                       <>
                         <FormField label="อ้างอิงใบเสนอราคา (QT_Ref)" value={form.qtRef} onChange={updateForm('qtRef')} icon={ClipboardList} mono />
-                        <FormField label="ครบกำหนด (Due Date)" value={form.dueDate} onChange={updateForm('dueDate')} icon={Calendar} mono />
+                        <FormField label="ครบกำหนด (Due Date)" value={form.dueDate} onChange={updateForm('dueDate')} icon={Calendar} mono type="date" />
                       </>
                     )}
                     {viewStage === 'tax_invoice' && (
                       <>
                         <FormField label="อ้างอิงใบวางบิล (INV_Ref)" value={form.invRef} onChange={updateForm('invRef')} icon={Receipt} mono />
+                        <FormField label="เลขอ้างอิง PO" value={form.poRef} onChange={updateForm('poRef')} icon={ClipboardList} mono />
+                        <FormField label="วันที่ PO" value={form.poDate} onChange={updateForm('poDate')} icon={Calendar} mono type="date" />
+                        <div>
+                          <label className="flex items-center gap-1.5 text-xs mb-1.5" style={{ color: 'var(--moss)' }}>
+                            <Building2 size={12} strokeWidth={1.75} /> ออกในนาม
+                          </label>
+                          <div className="space-y-2">
+                            <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--bone)' }}>
+                              <input type="radio" name={`branchType-${formKey}`} checked={form.branchType === 'hq'} onChange={() => setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], branchType: 'hq' } }))} />
+                              สำนักงานใหญ่
+                            </label>
+                            <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--bone)' }}>
+                              <input type="radio" name={`branchType-${formKey}`} checked={form.branchType === 'branch'} onChange={() => setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], branchType: 'branch' } }))} />
+                              สาขา
+                              <input
+                                type="text"
+                                value={form.branchName}
+                                onChange={(e) => setFormStates((prev) => ({ ...prev, [formKey]: { ...prev[formKey], branchType: 'branch', branchName: e.target.value } }))}
+                                placeholder="พิมพ์ชื่อสาขา..."
+                                className="tg-input tg-focus px-2.5 py-1.5 text-sm flex-1"
+                              />
+                            </label>
+                          </div>
+                        </div>
                         <p className="text-xs flex items-center gap-1.5" style={{ color: 'var(--moss)' }}>
                           <Copy size={12} strokeWidth={1.75} /> เมื่อพิมพ์/พรีวิว ระบบจะออกให้ทั้ง "ต้นฉบับ" และ "สำเนา" ต่อกัน 2 หน้าโดยอัตโนมัติ
                         </p>
@@ -2432,12 +2998,22 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
                               <option value="">— เลือกวิธีชำระ —</option>
                               <option value="โอนเงินผ่านธนาคาร">โอนเงินผ่านธนาคาร</option>
                               <option value="เงินสด">เงินสด</option>
-                              <option value="เช็ก">เช็ก</option>
+                              <option value="เช็ค">เช็ค</option>
                             </select>
                             <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
                           </div>
                         </div>
+                        {form.payMethod === 'เช็ค' && (
+                          <div className="space-y-3 pl-3 ml-1" style={{ borderLeft: '2px solid var(--line)' }}>
+                            <FormField label="ธนาคาร" value={form.checkBank} onChange={updateForm('checkBank')} icon={Building2} />
+                            <FormField label="เลขที่เช็ค" value={form.checkNo} onChange={updateForm('checkNo')} icon={Hash} mono />
+                            <FormField label="วันที่ (หน้าเช็ค)" value={form.checkDate} onChange={updateForm('checkDate')} icon={Calendar} mono type="date" />
+                          </div>
+                        )}
                         <FormField label="บิลอ้างอิง (INV_Ref)" value={form.invRef} onChange={updateForm('invRef')} icon={Receipt} mono />
+                        <p className="text-xs flex items-center gap-1.5" style={{ color: 'var(--moss)' }}>
+                          <Copy size={12} strokeWidth={1.75} /> เมื่อพิมพ์/พรีวิว ระบบจะออกให้ทั้ง "ต้นฉบับ" และ "สำเนา" ต่อกัน 2 หน้าโดยอัตโนมัติ
+                        </p>
                       </>
                     )}
                   </div>
@@ -2582,6 +3158,47 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
       {showPreview && (
         <DocumentPreview doc={doc} project={project} formData={form} amounts={amounts} stage={viewStage} copyLabel={null} onClose={() => setShowPreview(false)} />
       )}
+
+      {/* Photo panel */}
+      {showDocPhotoReport && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(110,80,55,0.45)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '1.5rem', overflowY: 'auto' }}>
+          <div className="tg-panel" style={{ maxWidth: 900, width: '100%', margin: '0.5rem 0', maxHeight: '94vh', overflowY: 'auto', padding: '32px 36px', background: '#fff' }}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-base font-semibold" style={{ color: 'var(--bone)' }}>ภาพถ่ายหน้างาน</h2>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--moss)' }}>
+                  อ้างอิงเอกสาร: <span className="tg-mono">{(formStates[formKey] || {}).docNo || `(${DOC_TITLES[viewStage] || 'เอกสาร'})`}</span>
+                </p>
+              </div>
+              <button onClick={() => setShowDocPhotoReport(false)} className="tg-focus tg-navbtn px-3 py-2 rounded-lg text-sm" style={{ border: '1px solid var(--line)', color: 'var(--moss)' }}>ปิด</button>
+            </div>
+            <PhotoGalleryUploader
+              photos={docPhotos[selectedDocId] || []}
+              onChange={(p) => setDocPhotos((prev) => ({ ...prev, [selectedDocId]: p }))}
+              photoPos={docPhotoPos}
+              onPhotoPosChange={setDocPhotoPos}
+              photoZoom={docPhotoZoom}
+              onPhotoZoomChange={setDocPhotoZoom}
+            />
+            {(docPhotos[selectedDocId] || []).length > 0 && (
+              <button
+                onClick={() => {
+                  const docNo = (formStates[formKey] || {}).docNo || 'DOC';
+                  const prevTitle = document.title;
+                  document.title = `ภาพถ่ายหน้างาน_${docNo}`;
+                  window.print();
+                  setTimeout(() => { document.title = prevTitle; }, 1000);
+                }}
+                className="tg-focus tg-navbtn flex items-center justify-center gap-2 w-full mt-4 px-4 py-3 rounded-xl text-sm font-medium"
+                style={{ background: 'var(--sage)', color: '#fff' }}
+              >
+                <Printer size={16} strokeWidth={1.75} /> พิมพ์ / บันทึก PDF
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      )}
     </div>
   );
 };
@@ -2592,9 +3209,6 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
 const HREmployeeCard = () => {
   const [employees, setEmployees] = useState(employeesData);
   const [selectedId, setSelectedId] = useState(employeesData[0].id);
-  useEffect(() => {
-    fetch('/api/sheets/employees').then(r => r.ok ? r.json() : null).then(d => { if (Array.isArray(d) && d.length) { setEmployees(d); setSelectedId(d[0].id); } }).catch(() => {});
-  }, []);
   const [siteFilter, setSiteFilter] = useState('all');
   const [cardEntity, setCardEntity] = useState('entity1');
   const [customCompanyName, setCustomCompanyName] = useState('');
@@ -2603,6 +3217,9 @@ const HREmployeeCard = () => {
   const [employeeWages, setEmployeeWages] = useState({});
   const [payrollInputs, setPayrollInputs] = useState({});
   const [showPayrollPDF, setShowPayrollPDF] = useState(false);
+  const [payrollEmployee, setPayrollEmployee] = useState(null);
+  const [socialSecurity, setSocialSecurity] = useState(750); // default 750/month
+  const [expenseClaims, setExpenseClaims] = useState({}); // {empId: [{id, desc, amount}]}
   const getWage = (id) => employeeWages[id] ?? 450;
   const updateWage = (id, val) => setEmployeeWages((prev) => ({ ...prev, [id]: Number(val) || 0 }));
   const getPayroll = (id) => payrollInputs[id] || { workDays: 26, otHours: 0, advance: 0 };
@@ -2658,10 +3275,11 @@ const HREmployeeCard = () => {
     if (!newEmployee.name.trim()) return;
     const n = employees.length + 15;
     const id = `EMP-2026-${String(n).padStart(3, '0')}`;
-    const savedEmployee = { ...newEmployee, id };
-    setEmployees((prev) => [...prev, savedEmployee]);
-    fetch('/api/sheets/employees', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(savedEmployee) }).catch(() => {});
+    setEmployees((prev) => [...prev, { ...newEmployee, id }]);
     setEmployeeWages((prev) => ({ ...prev, [id]: Number(newEmployee.wage) || 450 }));
+    if (newEmployee._photo) {
+      setEmployeePhotos((prev) => ({ ...prev, [id]: newEmployee._photo }));
+    }
     setNewEmployee(blankEmployee);
     setShowAddEmployee(false);
     setSelectedId(id);
@@ -2674,12 +3292,7 @@ const HREmployeeCard = () => {
   };
 
   const updateEmployeeStatus = (id, status) => {
-    setEmployees((prev) => {
-      const updated = prev.map((e) => (e.id === id ? { ...e, status } : e));
-      const emp = updated.find(e => e.id === id);
-      if (emp) fetch('/api/sheets/employees', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(emp) }).catch(() => {});
-      return updated;
-    });
+    setEmployees((prev) => prev.map((e) => (e.id === id ? { ...e, status } : e)));
     setDetailEmployee((prev) => (prev && prev.id === id ? { ...prev, status } : prev));
   };
 
@@ -2914,7 +3527,7 @@ const HREmployeeCard = () => {
               <h3 className="text-sm font-semibold mb-1" style={{ color: 'var(--bone)' }}>พรีวิวบัตรพนักงาน (CR80 แนวตั้ง)</h3>
               <p className="text-xs mb-4" style={{ color: 'var(--moss)' }}>{cardEmployee?.name}</p>
 
-              <EmployeeCard employee={cardEmployee} entityKey={cardEntity} customCompanyName={customCompanyName} photoUrl={employeePhotos[cardSelectedId]} />
+              <EmployeeCard employee={cardEmployee} entityKey={cardEntity} customCompanyName={customCompanyName} photoUrl={employeePhotos[cardSelectedId] || cardEmployee?._photo} />
 
               <div className="grid grid-cols-2 gap-4 mt-6 pt-5" style={{ borderTop: '1px solid var(--line)' }}>
                 <div>
@@ -2954,10 +3567,12 @@ const HREmployeeCard = () => {
                 <th className="pb-3 pr-4 font-medium">ชื่อ-นามสกุล</th>
                 <th className="pb-3 pr-4 font-medium text-right">ค่าแรง/วัน</th>
                 <th className="pb-3 pr-4 font-medium text-right">วันทำงาน</th>
+                <th className="pb-3 pr-4 font-medium text-right" style={{ color: 'var(--sage)' }}>= รวมค่าแรง</th>
                 <th className="pb-3 pr-4 font-medium text-right">OT (ชม.)</th>
-                <th className="pb-3 pr-4 font-medium text-right">อัตรา OT/ชม.</th>
+                <th className="pb-3 pr-4 font-medium text-right" style={{ color: 'var(--mist)' }}>= รวม OT</th>
                 <th className="pb-3 pr-4 font-medium text-right">เบิกล่วงหน้า</th>
                 <th className="pb-3 font-medium text-right">ยอดสุทธิ</th>
+                <th className="pb-3"></th>
               </tr>
             </thead>
             <tbody>
@@ -2965,7 +3580,9 @@ const HREmployeeCard = () => {
                 const wage = getWage(e.id);
                 const p = getPayroll(e.id);
                 const otRate = (wage / 8) * 1.5;
-                const net = wage * p.workDays + otRate * p.otHours - p.advance;
+                const baseTotal = wage * p.workDays;
+                const otTotal = otRate * p.otHours;
+                const net = baseTotal + otTotal - p.advance;
                 return (
                   <tr key={e.id} style={{ borderBottom: '1px solid var(--line)' }}>
                     <td className="py-2.5 pr-4 font-medium" style={{ color: 'var(--bone)' }}>{e.name}</td>
@@ -2975,21 +3592,27 @@ const HREmployeeCard = () => {
                     <td className="py-2.5 pr-4 text-right">
                       <input type="number" value={p.workDays} onFocus={(e) => e.target.select()} onChange={(ev) => updatePayroll(e.id, 'workDays', ev.target.value)} className="tg-input tg-focus w-20 px-2 py-1.5 text-sm tg-mono text-right" />
                     </td>
+                    <td className="py-2.5 pr-4 text-right tg-mono text-xs" style={{ color: 'var(--sage)' }}>{fmtTHB(baseTotal)}</td>
                     <td className="py-2.5 pr-4 text-right">
                       <input type="number" value={p.otHours} onFocus={(e) => e.target.select()} onChange={(ev) => updatePayroll(e.id, 'otHours', ev.target.value)} className="tg-input tg-focus w-20 px-2 py-1.5 text-sm tg-mono text-right" />
                     </td>
-                    <td className="py-2.5 pr-4 text-right tg-mono" style={{ color: 'var(--moss)' }}>{otRate.toFixed(2)}</td>
+                    <td className="py-2.5 pr-4 text-right tg-mono text-xs" style={{ color: 'var(--mist)' }}>{fmtTHB(otTotal)}</td>
                     <td className="py-2.5 pr-4 text-right">
                       <input type="number" value={p.advance} onFocus={(e) => e.target.select()} onChange={(ev) => updatePayroll(e.id, 'advance', ev.target.value)} className="tg-input tg-focus w-24 px-2 py-1.5 text-sm tg-mono text-right" />
                     </td>
                     <td className="py-2.5 text-right tg-mono font-semibold" style={{ color: 'var(--sage)' }}>{fmtTHB(net)}</td>
+                    <td className="py-2.5 pl-2">
+                      <button onClick={() => setPayrollEmployee(e)} className="tg-focus tg-navbtn px-2 py-1.5 rounded-lg text-xs" style={{ background: 'var(--sage-soft)', color: 'var(--sage)', border: '1px solid rgba(217,142,92,0.25)' }}>
+                        สลิป
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
             </tbody>
             <tfoot>
               <tr style={{ borderTop: '2px solid var(--line-strong)' }}>
-                <td colSpan={6} className="py-3 pr-4 text-right font-semibold" style={{ color: 'var(--bone)' }}>รวมยอดจ่ายทั้งหมด</td>
+                <td colSpan={7} className="py-3 pr-4 text-right font-semibold" style={{ color: 'var(--bone)' }}>รวมยอดจ่ายทั้งหมด</td>
                 <td className="py-3 text-right tg-mono font-semibold text-lg" style={{ color: 'var(--gold)' }}>
                   {fmtTHB(filteredEmployees.reduce((sum, e) => {
                     const wage = getWage(e.id);
@@ -3011,30 +3634,43 @@ const HREmployeeCard = () => {
             <div className="flex items-start justify-between gap-3 mb-5">
               <div className="flex items-center gap-3">
                 <div style={{ width: 56, height: 56, borderRadius: '9999px', overflow: 'hidden', background: 'var(--sage-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--line-strong)', flexShrink: 0 }}>
-                  {employeePhotos[detailEmployee.id] ? (
-                    <img src={employeePhotos[detailEmployee.id]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {employeePhotos[detailEmployee.id] || detailEmployee._photo ? (
+                    <img src={employeePhotos[detailEmployee.id] || detailEmployee._photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <User size={26} strokeWidth={1.5} style={{ color: 'var(--sage)' }} />
                   )}
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold" style={{ color: 'var(--bone)' }}>{detailEmployee.name}</h3>
-                  <p className="text-sm" style={{ color: 'var(--moss)' }}>{detailEmployee.position} {detailEmployee.nickname && `· "${detailEmployee.nickname}"`}</p>
+                  <p className="text-xs tg-mono mt-0.5" style={{ color: 'var(--moss)' }}>{detailEmployee.id}</p>
                 </div>
               </div>
               <button onClick={() => setDetailEmployee(null)} className="tg-focus tg-navbtn p-1.5 rounded-lg" style={{ color: 'var(--moss)' }}><X size={18} strokeWidth={1.75} /></button>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm mb-5">
-              <p><span style={{ color: 'var(--moss)' }}>รหัส: </span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{detailEmployee.id}</span></p>
+            {/* Editable fields */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <FormField label="ชื่อ-นามสกุล" value={detailEmployee.name} onChange={(e) => setDetailEmployee((p) => ({ ...p, name: e.target.value }))} icon={User} full />
+              <FormField label="ชื่อเล่น" value={detailEmployee.nickname || ''} onChange={(e) => setDetailEmployee((p) => ({ ...p, nickname: e.target.value }))} icon={User} />
+              <FormField label="ตำแหน่ง" value={detailEmployee.position} onChange={(e) => setDetailEmployee((p) => ({ ...p, position: e.target.value }))} icon={Briefcase} />
               <div>
-                <p className="mb-1"><span style={{ color: 'var(--moss)' }}>สถานะ: </span></p>
+                <label className="flex items-center gap-1.5 text-xs mb-1.5" style={{ color: 'var(--moss)' }}><MapPin size={12} /> ไซต์งาน</label>
                 <div className="relative">
-                  <select
-                    value={detailEmployee.status}
-                    onChange={(e) => updateEmployeeStatus(detailEmployee.id, e.target.value)}
-                    className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2 text-sm"
-                  >
+                  <select value={detailEmployee.site || ''} onChange={(e) => setDetailEmployee((p) => ({ ...p, site: e.target.value }))} className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2 text-sm">
+                    <option value="">— เลือกไซต์งาน —</option>
+                    {projectsData.filter((p) => p.status === 'active').map((p) => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
+                    <option value="สำนักงาน">สำนักงาน</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                  </select>
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
+                </div>
+              </div>
+              <div>
+                <label className="flex items-center gap-1.5 text-xs mb-1.5" style={{ color: 'var(--moss)' }}><CheckCircle2 size={12} /> สถานะ</label>
+                <div className="relative">
+                  <select value={detailEmployee.status} onChange={(e) => { updateEmployeeStatus(detailEmployee.id, e.target.value); setDetailEmployee((p) => ({ ...p, status: e.target.value })); }} className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2 text-sm">
                     {Object.entries(employeeStatusMap).map(([key, val]) => (
                       <option key={key} value={key}>{val.label}</option>
                     ))}
@@ -3042,21 +3678,15 @@ const HREmployeeCard = () => {
                   <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
                 </div>
               </div>
-              <p><span style={{ color: 'var(--moss)' }}>ไซต์งาน: </span><span style={{ color: 'var(--bone)' }}>{detailEmployee.site}</span></p>
-              <p><span style={{ color: 'var(--moss)' }}>เบอร์ติดต่อ: </span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{detailEmployee.phone}</span></p>
-              <p><span style={{ color: 'var(--moss)' }}>เริ่มงาน: </span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{detailEmployee.start}</span></p>
-              <p><span style={{ color: 'var(--moss)' }}>สัญญาถึง: </span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{detailEmployee.contractEnd}</span></p>
-              <p><span style={{ color: 'var(--moss)' }}>กรุ๊ปเลือด: </span><span style={{ color: 'var(--bone)' }}>{detailEmployee.blood || '—'}</span></p>
+              <FormField label="เบอร์ติดต่อ" value={detailEmployee.phone} onChange={(e) => setDetailEmployee((p) => ({ ...p, phone: e.target.value }))} icon={Phone} mono />
+              <FormField label="เริ่มงาน" value={detailEmployee.start} onChange={(e) => setDetailEmployee((p) => ({ ...p, start: e.target.value }))} icon={Calendar} mono type="date" />
+              <FormField label="สัญญาถึง" value={detailEmployee.contractEnd || ''} onChange={(e) => setDetailEmployee((p) => ({ ...p, contractEnd: e.target.value }))} icon={Calendar} mono type="date" />
+              <FormField label="กรุ๊ปเลือด" value={detailEmployee.blood || ''} onChange={(e) => setDetailEmployee((p) => ({ ...p, blood: e.target.value }))} icon={Heart} />
               <div>
-                <p className="mb-1"><span style={{ color: 'var(--moss)' }}>ค่าแรง (บาท/วัน): </span></p>
-                <input
-                  type="number"
-                  value={getWage(detailEmployee.id)}
-                  onChange={(e) => updateWage(detailEmployee.id, e.target.value)}
-                  className="tg-input tg-focus w-full px-3 py-2 text-sm tg-mono"
-                />
+                <label className="flex items-center gap-1.5 text-xs mb-1.5" style={{ color: 'var(--moss)' }}><Wallet size={12} /> ค่าแรง (บาท/วัน)</label>
+                <input type="number" value={getWage(detailEmployee.id)} onFocus={(e) => e.target.select()} onChange={(e) => updateWage(detailEmployee.id, e.target.value)} className="tg-input tg-focus w-full px-3 py-2 text-sm tg-mono" />
               </div>
-              <p className="col-span-2"><span style={{ color: 'var(--moss)' }}>ติดต่อกรณีฉุกเฉิน: </span><span style={{ color: 'var(--bone)' }}>{detailEmployee.emergencyContact || '—'}</span></p>
+              <FormField label="ติดต่อกรณีฉุกเฉิน" value={detailEmployee.emergencyContact || ''} onChange={(e) => setDetailEmployee((p) => ({ ...p, emergencyContact: e.target.value }))} icon={Phone} full />
             </div>
 
             <h4 className="text-sm font-semibold mb-2" style={{ color: 'var(--bone)' }}>เอกสารประจำตัว</h4>
@@ -3071,13 +3701,25 @@ const HREmployeeCard = () => {
               ))}
             </div>
 
-            <button
-              onClick={() => { handleIssueCard(detailEmployee); setDetailEmployee(null); }}
-              className="tg-focus tg-navbtn w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium"
-              style={{ background: 'var(--sage)', color: '#fff' }}
-            >
-              <CreditCard size={16} strokeWidth={1.75} /> ออกบัตรพนักงานคนนี้
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setEmployees((prev) => prev.map((e) => e.id === detailEmployee.id ? { ...detailEmployee } : e));
+                  setDetailEmployee(null);
+                }}
+                className="tg-focus tg-navbtn flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium"
+                style={{ background: 'var(--sage)', color: '#fff' }}
+              >
+                <Check size={16} strokeWidth={1.75} /> บันทึกการแก้ไข
+              </button>
+              <button
+                onClick={() => { handleIssueCard(detailEmployee); setDetailEmployee(null); }}
+                className="tg-focus tg-navbtn flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium"
+                style={{ border: '1px solid var(--line)', color: 'var(--sage)' }}
+              >
+                <CreditCard size={16} strokeWidth={1.75} /> ออกบัตร
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -3110,10 +3752,23 @@ const HREmployeeCard = () => {
               <FormField label="ชื่อ-นามสกุล" value={newEmployee.name} onChange={(e) => setNewEmployee((p) => ({ ...p, name: e.target.value }))} icon={User} full />
               <FormField label="ชื่อเล่น" value={newEmployee.nickname} onChange={(e) => setNewEmployee((p) => ({ ...p, nickname: e.target.value }))} icon={User} />
               <FormField label="ตำแหน่ง" value={newEmployee.position} onChange={(e) => setNewEmployee((p) => ({ ...p, position: e.target.value }))} icon={Briefcase} />
-              <FormField label="ไซต์งาน" value={newEmployee.site} onChange={(e) => setNewEmployee((p) => ({ ...p, site: e.target.value }))} icon={MapPin} />
+              <div>
+                <label className="flex items-center gap-1.5 text-xs mb-1.5" style={{ color: 'var(--moss)' }}><MapPin size={12} strokeWidth={1.75} /> ไซต์งาน / โครงการ</label>
+                <div className="relative">
+                  <select value={newEmployee.site} onChange={(e) => setNewEmployee((p) => ({ ...p, site: e.target.value }))} className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2 text-sm">
+                    <option value="">— เลือกไซต์งาน —</option>
+                    {projectsData.filter((p) => p.status === 'active').map((p) => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
+                    <option value="สำนักงาน">สำนักงาน</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                  </select>
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
+                </div>
+              </div>
               <FormField label="เบอร์ติดต่อ" value={newEmployee.phone} onChange={(e) => setNewEmployee((p) => ({ ...p, phone: e.target.value }))} icon={Phone} mono />
-              <FormField label="วันที่เริ่มงาน" value={newEmployee.start} onChange={(e) => setNewEmployee((p) => ({ ...p, start: e.target.value }))} icon={Calendar} mono />
-              <FormField label="สัญญาถึง" value={newEmployee.contractEnd} onChange={(e) => setNewEmployee((p) => ({ ...p, contractEnd: e.target.value }))} icon={Calendar} mono />
+              <FormField label="วันที่เริ่มงาน" value={newEmployee.start} onChange={(e) => setNewEmployee((p) => ({ ...p, start: e.target.value }))} icon={Calendar} mono type="date" />
+              <FormField label="สัญญาถึง" value={newEmployee.contractEnd} onChange={(e) => setNewEmployee((p) => ({ ...p, contractEnd: e.target.value }))} icon={Calendar} mono type="date" />
               <FormField label="กรุ๊ปเลือด" value={newEmployee.blood} onChange={(e) => setNewEmployee((p) => ({ ...p, blood: e.target.value }))} icon={User} />
               <FormField label="ค่าแรง (บาท/วัน)" value={newEmployee.wage} onChange={(e) => setNewEmployee((p) => ({ ...p, wage: e.target.value }))} icon={Wallet} mono type="number" />
               <FormField label="ติดต่อกรณีฉุกเฉิน" value={newEmployee.emergencyContact} onChange={(e) => setNewEmployee((p) => ({ ...p, emergencyContact: e.target.value }))} icon={Phone} full />
@@ -3143,6 +3798,227 @@ const HREmployeeCard = () => {
       )}
 
       {/* Payroll PDF preview */}
+      {/* ─────────────── Individual payslip modal ─────────────── */}
+      {payrollEmployee && (() => {
+        const e = payrollEmployee;
+        const wage = getWage(e.id);
+        const p = getPayroll(e.id);
+        const otRate = (wage / 8) * 1.5;
+        const basePay = wage * p.workDays;
+        const otPay = otRate * p.otHours;
+        const claims = expenseClaims[e.id] || [];
+        const totalClaims = claims.reduce((s, c) => s + (Number(c.amount) || 0), 0);
+        // Per-employee social security — stored in payrollInputs as ss field
+        const ss = Number(p.ss ?? 750);
+        const net = basePay + otPay + totalClaims - ss - (p.advance || 0);
+
+        const addClaim = () => setExpenseClaims((prev) => ({ ...prev, [e.id]: [...(prev[e.id] || []), { id: Date.now(), desc: '', amount: 0 }] }));
+        const updateClaim = (cid, field, val) => setExpenseClaims((prev) => ({ ...prev, [e.id]: prev[e.id].map((c) => c.id === cid ? { ...c, [field]: val } : c) }));
+        const removeClaim = (cid) => setExpenseClaims((prev) => ({ ...prev, [e.id]: prev[e.id].filter((c) => c.id !== cid) }));
+        const updateSS = (val) => updatePayroll(e.id, 'ss', val);
+
+        return (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(110,80,55,0.45)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '1.5rem', overflowY: 'auto' }}>
+            <div className="tg-panel" style={{ maxWidth: 680, width: '100%', margin: '0.5rem 0', background: '#fff', overflow: 'hidden' }}>
+
+              {/* ── Controls (hidden when printing) ── */}
+              <div className="tg-noprint p-6 space-y-4" style={{ borderBottom: '1px solid var(--line)' }}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--moss)' }}>กรอกรายละเอียดเงินเดือน</p>
+                    <h2 className="text-base font-semibold" style={{ color: 'var(--bone)' }}>{e.name} · <span className="tg-mono text-sm">{e.id}</span></h2>
+                    <p className="text-xs" style={{ color: 'var(--moss)' }}>{e.position} · ไซต์งาน: {e.site || '—'}</p>
+                  </div>
+                  <button onClick={() => setPayrollEmployee(null)} className="tg-focus tg-navbtn p-1.5 rounded-lg" style={{ color: 'var(--moss)' }}><X size={18} strokeWidth={1.75} /></button>
+                </div>
+
+                {/* Inputs grid */}
+                <div className="grid grid-cols-4 gap-3">
+                  <div>
+                    <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>ค่าแรง/วัน (฿)</label>
+                    <input type="number" value={wage} onFocus={(ev) => ev.target.select()} onChange={(ev) => updateWage(e.id, ev.target.value)} className="tg-input tg-focus w-full px-2.5 py-2 text-sm tg-mono" />
+                  </div>
+                  <div>
+                    <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>วันทำงาน</label>
+                    <input type="number" value={p.workDays} onFocus={(ev) => ev.target.select()} onChange={(ev) => updatePayroll(e.id, 'workDays', ev.target.value)} className="tg-input tg-focus w-full px-2.5 py-2 text-sm tg-mono" />
+                  </div>
+                  <div>
+                    <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>OT (ชม.)</label>
+                    <input type="number" value={p.otHours} onFocus={(ev) => ev.target.select()} onChange={(ev) => updatePayroll(e.id, 'otHours', ev.target.value)} className="tg-input tg-focus w-full px-2.5 py-2 text-sm tg-mono" />
+                  </div>
+                  <div>
+                    <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>เบิกล่วงหน้า (฿)</label>
+                    <input type="number" value={p.advance || 0} onFocus={(ev) => ev.target.select()} onChange={(ev) => updatePayroll(e.id, 'advance', ev.target.value)} className="tg-input tg-focus w-full px-2.5 py-2 text-sm tg-mono" />
+                  </div>
+                </div>
+
+                {/* Social security */}
+                <div className="flex items-center gap-3">
+                  <div style={{ flex: '0 0 auto' }}>
+                    <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>ประกันสังคม (฿/เดือน)</label>
+                    <input type="number" value={ss} onFocus={(ev) => ev.target.select()} onChange={(ev) => updateSS(ev.target.value)} className="tg-input tg-focus w-36 px-2.5 py-2 text-sm tg-mono" />
+                  </div>
+                  <p className="text-xs pt-5" style={{ color: 'var(--moss)' }}>อัตราประกันสังคม 5% ของค่าจ้าง (สูงสุด 750 บาท/เดือน)</p>
+                </div>
+
+                {/* Expense claims */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-xs font-semibold" style={{ color: 'var(--bone)' }}>รายการเบิกเพิ่มเติม</label>
+                    <button onClick={addClaim} className="tg-focus tg-navbtn flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs" style={{ background: 'var(--sage-soft)', color: 'var(--sage)', border: '1px solid rgba(217,142,92,0.25)' }}>
+                      <Plus size={12} strokeWidth={2} /> เพิ่มรายการ
+                    </button>
+                  </div>
+                  {claims.length === 0 && <p className="text-xs" style={{ color: 'var(--moss)' }}>ยังไม่มีรายการเบิก — กด "เพิ่มรายการ" เพื่อเพิ่ม</p>}
+                  <div className="space-y-2">
+                    {claims.map((c) => (
+                      <div key={c.id} className="flex items-center gap-2">
+                        <input value={c.desc} onChange={(ev) => updateClaim(c.id, 'desc', ev.target.value)} placeholder="รายละเอียด เช่น ค่าน้ำมัน, ค่าเดินทาง..." className="tg-input tg-focus flex-1 px-2.5 py-1.5 text-sm" />
+                        <input type="number" value={c.amount} onFocus={(ev) => ev.target.select()} onChange={(ev) => updateClaim(c.id, 'amount', ev.target.value)} placeholder="จำนวนเงิน" className="tg-input tg-focus tg-mono w-28 px-2.5 py-1.5 text-sm text-right" />
+                        <button onClick={() => removeClaim(c.id)} className="tg-focus tg-navbtn p-1.5 rounded-lg" style={{ color: 'var(--rust)' }}><Trash2 size={14} strokeWidth={1.75} /></button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex gap-2 pt-2" style={{ borderTop: '1px solid var(--line)' }}>
+                  <button
+                    onClick={() => {
+                      const prevTitle = document.title;
+                      document.title = `สลิปเงินเดือน_${e.name}`;
+                      window.print();
+                      setTimeout(() => { document.title = prevTitle; }, 1000);
+                    }}
+                    className="tg-focus tg-navbtn flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium"
+                    style={{ background: 'var(--sage)', color: '#fff' }}
+                  >
+                    <Printer size={15} strokeWidth={1.75} /> ส่งออก PDF / พิมพ์สลิป
+                  </button>
+                  <button onClick={() => setPayrollEmployee(null)} className="tg-focus tg-navbtn px-4 py-2.5 rounded-xl text-sm" style={{ border: '1px solid var(--line)', color: 'var(--moss)' }}>ปิด</button>
+                </div>
+              </div>
+
+              {/* ── PAYSLIP — printed document ── */}
+              <div className="tg-print-area p-8" style={{ minHeight: 400 }}>
+                {/* Header */}
+                <div className="flex items-start justify-between pb-4 mb-5" style={{ borderBottom: '2px solid #1a1a1a' }}>
+                  <div className="flex items-start gap-3">
+                    <BranchMark className="w-14 h-14 shrink-0" style={{ color: '#1a1a1a' }} />
+                    <div>
+                      <p className="font-bold text-sm" style={{ color: '#1a1a1a' }}>บริษัท แต้มบุญ การ์เด้น จำกัด</p>
+                      <p className="text-xs mt-0.5" style={{ color: '#555' }}>59/54 หมู่ 4 ต.ลำโพ อ.บางบัวทอง จ.นนทบุรี 11110</p>
+                      <p className="text-xs" style={{ color: '#555' }}>โทร 086-824-1872</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-base" style={{ color: '#1a1a1a' }}>สลิปเงินเดือน</p>
+                    <p className="text-xs tg-mono mt-0.5" style={{ color: '#555' }}>PAYSLIP</p>
+                    <p className="text-xs tg-mono mt-1" style={{ color: '#555' }}>วันที่ออก: {new Date().toLocaleDateString('th-TH', { day:'2-digit', month:'2-digit', year:'numeric' })}</p>
+                  </div>
+                </div>
+
+                {/* Employee info */}
+                <div className="grid grid-cols-2 gap-x-8 mb-5 pb-4 text-sm" style={{ borderBottom: '1px solid #ddd' }}>
+                  <p><span style={{ color: '#888' }}>ชื่อพนักงาน: </span><span style={{ color: '#1a1a1a', fontWeight: 600 }}>{e.name}</span></p>
+                  <p><span style={{ color: '#888' }}>รหัส: </span><span className="tg-mono" style={{ color: '#1a1a1a' }}>{e.id}</span></p>
+                  <p className="mt-1"><span style={{ color: '#888' }}>ตำแหน่ง: </span><span style={{ color: '#1a1a1a' }}>{e.position}</span></p>
+                  <p className="mt-1"><span style={{ color: '#888' }}>ไซต์งาน: </span><span style={{ color: '#1a1a1a' }}>{e.site || '—'}</span></p>
+                </div>
+
+                {/* Earnings table */}
+                <table className="w-full text-sm mb-4" style={{ borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#f5f0eb' }}>
+                      <th className="text-left py-2 px-3 font-semibold" style={{ color: '#1a1a1a', border: '1px solid #ddd', width: '50%' }}>รายการรายรับ</th>
+                      <th className="text-right py-2 px-3 font-semibold" style={{ color: '#1a1a1a', border: '1px solid #ddd' }}>คำนวณ</th>
+                      <th className="text-right py-2 px-3 font-semibold" style={{ color: '#1a1a1a', border: '1px solid #ddd' }}>จำนวน (บาท)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="py-2 px-3" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>ค่าแรงพื้นฐาน</td>
+                      <td className="py-2 px-3 text-right tg-mono" style={{ border: '1px solid #ddd', color: '#555', fontSize: 11 }}>{wage} × {p.workDays} วัน</td>
+                      <td className="py-2 px-3 text-right tg-mono" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>{fmtTHB(basePay)}</td>
+                    </tr>
+                    {p.otHours > 0 && (
+                      <tr>
+                        <td className="py-2 px-3" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>ค่าล่วงเวลา (OT)</td>
+                        <td className="py-2 px-3 text-right tg-mono" style={{ border: '1px solid #ddd', color: '#555', fontSize: 11 }}>{otRate.toFixed(2)} × {p.otHours} ชม.</td>
+                        <td className="py-2 px-3 text-right tg-mono" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>{fmtTHB(otPay)}</td>
+                      </tr>
+                    )}
+                    {claims.map((c) => (
+                      <tr key={c.id}>
+                        <td className="py-2 px-3" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>{c.desc || 'รายการเบิก'}</td>
+                        <td className="py-2 px-3" style={{ border: '1px solid #ddd' }}></td>
+                        <td className="py-2 px-3 text-right tg-mono" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>{fmtTHB(Number(c.amount) || 0)}</td>
+                      </tr>
+                    ))}
+                    <tr style={{ background: '#f9f6f2' }}>
+                      <td colSpan={2} className="py-2 px-3 font-semibold" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>รวมรายรับ</td>
+                      <td className="py-2 px-3 text-right tg-mono font-semibold" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>{fmtTHB(basePay + otPay + totalClaims)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                {/* Deductions */}
+                <table className="w-full text-sm mb-4" style={{ borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#f5f0eb' }}>
+                      <th className="text-left py-2 px-3 font-semibold" style={{ color: '#1a1a1a', border: '1px solid #ddd', width: '50%' }}>รายการหัก</th>
+                      <th className="text-right py-2 px-3" style={{ border: '1px solid #ddd' }}></th>
+                      <th className="text-right py-2 px-3 font-semibold" style={{ color: '#1a1a1a', border: '1px solid #ddd' }}>จำนวน (บาท)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="py-2 px-3" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>ประกันสังคม</td>
+                      <td className="py-2 px-3" style={{ border: '1px solid #ddd' }}></td>
+                      <td className="py-2 px-3 text-right tg-mono" style={{ border: '1px solid #ddd', color: '#c00' }}>{fmtTHB(ss)}</td>
+                    </tr>
+                    {(p.advance || 0) > 0 && (
+                      <tr>
+                        <td className="py-2 px-3" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>เงินเบิกล่วงหน้า</td>
+                        <td className="py-2 px-3" style={{ border: '1px solid #ddd' }}></td>
+                        <td className="py-2 px-3 text-right tg-mono" style={{ border: '1px solid #ddd', color: '#c00' }}>{fmtTHB(p.advance)}</td>
+                      </tr>
+                    )}
+                    <tr style={{ background: '#f9f6f2' }}>
+                      <td colSpan={2} className="py-2 px-3 font-semibold" style={{ border: '1px solid #ddd', color: '#1a1a1a' }}>รวมรายหัก</td>
+                      <td className="py-2 px-3 text-right tg-mono font-semibold" style={{ border: '1px solid #ddd', color: '#c00' }}>{fmtTHB(ss + (p.advance || 0))}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                {/* Net pay */}
+                <div className="flex items-center justify-between px-3 py-3 rounded-xl" style={{ background: '#1a3a2a', marginBottom: 32 }}>
+                  <span className="font-bold text-base" style={{ color: '#fff' }}>ยอดรับสุทธิ (Net Pay)</span>
+                  <span className="tg-mono text-xl font-bold" style={{ color: '#7ec8a0' }}>{fmtTHB(net)} บาท</span>
+                </div>
+
+                {/* Signatures */}
+                <div className="grid grid-cols-3 gap-6 text-center text-xs mt-4" style={{ color: '#555' }}>
+                  <div>
+                    <div style={{ borderTop: '1px solid #999', paddingTop: 6 }}>( ……………………………… )</div>
+                    <p className="mt-1">ผู้จ่ายเงิน</p>
+                  </div>
+                  <div>
+                    <div style={{ borderTop: '1px solid #999', paddingTop: 6 }}>( ……………………………… )</div>
+                    <p className="mt-1">ผู้อนุมัติ</p>
+                  </div>
+                  <div>
+                    <div style={{ borderTop: '1px solid #999', paddingTop: 6 }}>( {e.name} )</div>
+                    <p className="mt-1">ผู้รับเงิน / วันที่ ………………</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        );
+      })()}
+
       {showPayrollPDF && (
         <div className="tg-modal-backdrop">
           <div className="tg-panel tg-print-area tg-scroll" style={{ maxWidth: 760, width: '100%', margin: '0.5rem 0', maxHeight: '94vh', overflowY: 'auto', padding: '36px 40px', background: '#fff' }}>
@@ -3237,6 +4113,11 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
   ]);
   const [saved, setSaved] = useState(false);
   const [showPhotoReport, setShowPhotoReport] = useState(false);
+  const [photoPos, setPhotoPos] = useState({});
+  const [photoZoom, setPhotoZoom] = useState({});
+  const [photoReportEntity, setPhotoReportEntity] = useState('entity1');
+  const [photoReportStageFilter, setPhotoReportStageFilter] = useState('all');
+  const [photoReportDetails, setPhotoReportDetails] = useState({ title: 'รายงานรูปถ่ายหน้างาน', scope: '', ref: '' });
 
   const project = projectsData.find((p) => p.id === projectId);
 
@@ -3259,6 +4140,9 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
     if (setProjectDirectCost) setProjectDirectCost(projectId, totalCost);
   }, [projectId, totalCost]);
 
+  const filteredReportPhotos = photos.filter((ph) => photoReportStageFilter === 'all' || (ph.stage || 'before') === photoReportStageFilter);
+  const totalReportPages = Math.max(1, Math.ceil(filteredReportPhotos.length / PHOTOS_PER_PAGE));
+
   return (
     <div className="p-6 md:p-10 max-w-screen-2xl mx-auto">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
@@ -3269,7 +4153,7 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
         </div>
       </div>
 
-      <div className="tg-split tg-50-50">
+      <div className="tg-split tg-60-40">
         <div className="space-y-5">
           <Tabs
             active={activeTab}
@@ -3277,7 +4161,6 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
             accent="rust"
             tabs={[
               { key: 'info', label: 'ข้อมูลทั่วไป', icon: ClipboardList },
-              { key: 'photos', label: 'ภาพถ่าย', icon: Camera },
               { key: 'costing', label: 'Direct Costing', icon: HardHat, badge: materials.length },
             ]}
           />
@@ -3300,8 +4183,9 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
                   <Calendar size={12} strokeWidth={1.75} /> วันที่บันทึก
                 </label>
                 <input
-                  value={logDate}
-                  onChange={(e) => { setLogDate(e.target.value); setSaved(false); }}
+                  type="date"
+                  value={toIso(logDate)}
+                  onChange={(e) => { setLogDate(toDmy(e.target.value)); setSaved(false); }}
                   className="tg-input tg-focus tg-mono w-full px-3 py-2 text-sm"
                 />
               </div>
@@ -3334,18 +4218,7 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
           {activeTab === 'photos' && (
           <div className="tg-panel p-5 md:p-6">
             <h2 className="text-sm font-semibold mb-1" style={{ color: 'var(--bone)' }}>ภาพถ่ายหน้างาน</h2>
-            <p className="text-xs mb-4" style={{ color: 'var(--moss)' }}>อัปโหลดภาพหน้างานได้หลายไฟล์พร้อมกัน หรือลากไฟล์มาวาง — ระบบจะจัดเรียงเป็นชุดหน้าละ {PHOTOS_PER_PAGE} รูป ตามฟอร์มรายงานรูปถ่ายหน้างาน</p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-              <div className="tg-panel p-4" style={{ background: 'var(--sage-soft)', borderColor: 'rgba(217,142,92,0.3)' }}>
-                <p className="text-sm font-semibold mb-1" style={{ color: 'var(--sage)' }}>● ภาพก่อนทำงาน — {photos.filter((p) => (p.stage || 'before') === 'before').length} รูป</p>
-                <p className="text-xs" style={{ color: 'var(--moss)' }}>ใช้แนบคู่กับใบเสนอราคา ก่อนเริ่มงานจริง</p>
-              </div>
-              <div className="tg-panel p-4" style={{ background: 'var(--gold-soft)', borderColor: 'rgba(201,162,39,0.35)' }}>
-                <p className="text-sm font-semibold mb-1" style={{ color: 'var(--gold)' }}>● ภาพหลังทำงาน — {photos.filter((p) => p.stage === 'after').length} รูป</p>
-                <p className="text-xs" style={{ color: 'var(--moss)' }}>ใช้แนบคู่กับใบวางบิล / ใบกำกับภาษี / ใบเสร็จรับเงิน เมื่องานเสร็จสิ้น</p>
-              </div>
-            </div>
+            <p className="text-xs mb-4" style={{ color: 'var(--moss)' }}>อัปโหลดภาพหน้างาน ลากเพื่อจัดตำแหน่ง ปรับซูม ใส่คำอธิบาย แล้วออกฟอร์มเพื่อพิมพ์แนบเอกสาร</p>
 
             <button
               onClick={() => setShowPhotoReport(true)}
@@ -3356,7 +4229,7 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
               <Printer size={16} strokeWidth={1.75} /> ออกฟอร์มภาพถ่ายหน้างาน (PDF)
             </button>
 
-            <PhotoGalleryUploader photos={photos} onChange={(p) => { setPhotos(p); setSaved(false); }} />
+            <PhotoGalleryUploader photos={photos} onChange={(p) => { setPhotos(p); setSaved(false); }} photoPos={photoPos} onPhotoPosChange={setPhotoPos} photoZoom={photoZoom} onPhotoZoomChange={setPhotoZoom} />
           </div>
           )}
 
@@ -3386,7 +4259,8 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
                     <th className="pb-2.5 pr-3 font-medium" style={{ width: '12%' }}>หน่วย</th>
                     <th className="pb-2.5 pr-3 font-medium" style={{ width: '14%' }}>ราคา/หน่วย</th>
                     <th className="pb-2.5 pr-3 font-medium" style={{ width: '22%' }}>ร้านค้า / ผู้จำหน่าย</th>
-                    <th className="pb-2.5 pr-3 font-medium text-right" style={{ width: '14%' }}>รวม (บาท)</th>
+                    <th className="pb-2.5 pr-3 font-medium text-right" style={{ width: '12%' }}>รวม (บาท)</th>
+                    <th className="pb-2.5 pr-3 font-medium text-center" style={{ width: '8%' }}>สลิป</th>
                     <th className="pb-2.5" style={{ width: '4%' }}></th>
                   </tr>
                 </thead>
@@ -3410,6 +4284,29 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
                       </td>
                       <td className="py-2 pr-3 text-right tg-mono font-medium" style={{ color: 'var(--bone)' }}>
                         {fmtTHB((Number(m.qty) || 0) * (Number(m.price) || 0))}
+                      </td>
+                      <td className="py-2 pr-3 text-center">
+                        {m.slip ? (
+                          <div className="inline-flex items-center gap-1">
+                            <a href={m.slip} target="_blank" rel="noreferrer" className="tg-focus inline-flex" title="ดูสลิป">
+                              <img src={m.slip} alt="สลิป" style={{ width: 32, height: 32, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--line-strong)' }} />
+                            </a>
+                            <button onClick={() => updateMaterial(m.id, 'slip', '')} className="tg-focus tg-navbtn p-1 rounded-full" style={{ color: 'var(--rust)' }} title="ลบสลิป">
+                              <X size={12} strokeWidth={2} />
+                            </button>
+                          </div>
+                        ) : (
+                          <label className="tg-focus tg-navbtn inline-flex items-center justify-center p-1.5 rounded-lg cursor-pointer" style={{ border: '1px dashed var(--line-strong)', color: 'var(--moss)' }} title="แนบสลิป">
+                            <Upload size={14} strokeWidth={1.75} />
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (!f) return;
+                              const reader = new FileReader();
+                              reader.onload = () => updateMaterial(m.id, 'slip', reader.result);
+                              reader.readAsDataURL(f);
+                            }} />
+                          </label>
+                        )}
                       </td>
                       <td className="py-2 text-right">
                         <button onClick={() => removeMaterial(m.id)} className="tg-focus tg-navbtn p-1.5 rounded-lg" style={{ color: 'var(--rust)' }} aria-label="ลบรายการ">
@@ -3436,10 +4333,7 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
           )}
 
           <button
-            onClick={() => {
-              setSaved(true);
-              fetch('/api/sheets/materials', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: `MAT-${Date.now()}`, projectId, logDate, recorder, description, materials }) }).catch(() => {});
-            }}
+            onClick={() => setSaved(true)}
             className="tg-focus tg-navbtn w-full px-4 py-3 rounded-xl text-sm font-medium"
             style={{ background: 'var(--sage-soft)', border: '1px solid rgba(217,142,92,0.25)', color: 'var(--sage)' }}
           >
@@ -3526,51 +4420,96 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
       {showPhotoReport && (
         <div className="tg-modal-backdrop">
           <div className="tg-panel tg-print-area tg-scroll" style={{ maxWidth: 800, width: '100%', margin: '0.5rem 0', maxHeight: '94vh', overflowY: 'auto', padding: '36px 40px', background: '#fff' }}>
-            {Array.from({ length: Math.max(1, Math.ceil(photos.length / PHOTOS_PER_PAGE)) }).map((_, pageIdx) => {
-              const pagePhotos = photos.slice(pageIdx * PHOTOS_PER_PAGE, pageIdx * PHOTOS_PER_PAGE + PHOTOS_PER_PAGE);
+
+            {/* Setup controls hidden when printing */}
+            <div className="tg-noprint mb-6 p-4 rounded-xl space-y-3" style={{ background: 'var(--sage-soft)', border: '1px solid rgba(217,142,92,0.3)' }}>
+              <p className="text-sm font-semibold" style={{ color: 'var(--bone)' }}>ตั้งค่าเอกสาร</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>นิติบุคคล</label>
+                  <div className="relative">
+                    <select value={photoReportEntity} onChange={(e) => setPhotoReportEntity(e.target.value)} className="tg-input tg-focus tg-select w-full pl-3 pr-9 py-2 text-sm">
+                      <option value="entity1">Entity 1 - {ENTITIES.entity1.name}</option>
+                      <option value="entity2">บริษัทอื่น / กรอกเอง</option>
+                    </select>
+                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--moss)' }} />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>หัวข้อเอกสาร</label>
+                  <input type="text" value={photoReportDetails.title} onChange={(e) => setPhotoReportDetails((p) => ({ ...p, title: e.target.value }))} className="tg-input tg-focus w-full px-3 py-2 text-sm" />
+                </div>
+                {photoReportEntity === 'entity2' && (
+                  <>
+                    <div>
+                      <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>ชื่อบริษัท</label>
+                      <input type="text" value={photoReportDetails.customName || ''} onChange={(e) => setPhotoReportDetails((p) => ({ ...p, customName: e.target.value }))} placeholder="ระบุชื่อบริษัท..." className="tg-input tg-focus w-full px-3 py-2 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>ที่อยู่</label>
+                      <input type="text" value={photoReportDetails.customAddress || ''} onChange={(e) => setPhotoReportDetails((p) => ({ ...p, customAddress: e.target.value }))} placeholder="ที่อยู่บริษัท..." className="tg-input tg-focus w-full px-3 py-2 text-sm" />
+                    </div>
+                  </>
+                )}
+                <div className="col-span-2">
+                  <label className="text-xs mb-1 block" style={{ color: 'var(--moss)' }}>ขอบเขตงาน / หมายเหตุ</label>
+                  <input type="text" value={photoReportDetails.scope} onChange={(e) => setPhotoReportDetails((p) => ({ ...p, scope: e.target.value }))} className="tg-input tg-focus w-full px-3 py-2 text-sm" />
+                </div>
+              </div>
+            </div>
+
+            {/* Photo pages */}
+            {Array.from({ length: totalReportPages }).map((_, pageIdx) => {
+              const pagePhotos = filteredReportPhotos.slice(pageIdx * PHOTOS_PER_PAGE, pageIdx * PHOTOS_PER_PAGE + PHOTOS_PER_PAGE);
               const slots = [...pagePhotos];
+              const reportEntity = ENTITIES[photoReportEntity] || ENTITIES.entity1;
               while (slots.length < PHOTOS_PER_PAGE) slots.push(null);
               return (
                 <div key={pageIdx} className={pageIdx > 0 ? 'tg-doc-copy' : ''} style={pageIdx > 0 ? { borderTop: '2px dashed var(--line-strong)', marginTop: 24, paddingTop: 24 } : undefined}>
                   <div className="flex items-start justify-between gap-4 pb-4" style={{ borderBottom: '2px solid var(--bone)' }}>
                     <div className="flex items-start gap-3">
-                      <BranchMark className="w-16 h-16 shrink-0" style={{ color: '#1a1a1a' }} />
-                      <div>
-                        <p className="text-sm font-bold" style={{ color: 'var(--bone)' }}>{ENTITIES.entity1.name}</p>
-                        <p className="text-xs mt-1" style={{ color: 'var(--moss)' }}>{ENTITIES.entity1.address}</p>
+                      {photoReportEntity !== 'entity2' && <BranchMark className="w-16 h-16 shrink-0" style={{ color: '#1a1a1a' }} />}                      <div>
+                        <p className="text-sm font-bold" style={{ color: 'var(--bone)' }}>
+                          {photoReportEntity === 'entity2' ? (photoReportDetails.customName || 'ระบุชื่อบริษัท') : reportEntity.name}
+                        </p>
+                        <p className="text-xs mt-1" style={{ color: 'var(--moss)' }}>
+                          {photoReportEntity === 'entity2' ? (photoReportDetails.customAddress || '') : reportEntity.address}
+                        </p>
                       </div>
                     </div>
                     <div className="text-right shrink-0 text-xs tg-mono" style={{ color: 'var(--moss)' }}>
-                      หน้า {pageIdx + 1} / {Math.max(1, Math.ceil(photos.length / PHOTOS_PER_PAGE))}
+                      หน้า {pageIdx + 1} / {totalReportPages}
                     </div>
                   </div>
 
                   <div className="text-center my-4">
-                    <span className="tg-badge tg-badge-sage" style={{ fontSize: 14, padding: '0.4rem 1.25rem', fontWeight: 700 }}>รายงานรูปถ่ายหน้างาน</span>
+                    <span className="tg-badge tg-badge-sage" style={{ fontSize: 14, padding: '0.4rem 1.25rem', fontWeight: 700 }}>{photoReportDetails.title || 'รายงานรูปถ่ายหน้างาน'}</span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm mb-5">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm mb-4">
                     <p><span style={{ color: 'var(--moss)' }}>โครงการ: </span><span style={{ color: 'var(--bone)' }}>{project.name}</span></p>
                     <p><span style={{ color: 'var(--moss)' }}>วันที่: </span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{logDate}</span></p>
                     <p className="col-span-2"><span style={{ color: 'var(--moss)' }}>ผู้บันทึก: </span><span style={{ color: 'var(--bone)' }}>{recorder || '—'}</span></p>
+                    {photoReportDetails.ref && <p><span style={{ color: 'var(--moss)' }}>อ้างอิง: </span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{photoReportDetails.ref}</span></p>}
+                    {photoReportDetails.scope && <p className="col-span-2"><span style={{ color: 'var(--moss)' }}>ขอบเขตงาน: </span><span style={{ color: 'var(--bone)' }}>{photoReportDetails.scope}</span></p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     {slots.map((p, i) => (
                       <div key={i} className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--line-strong)' }}>
-                        <div style={{ aspectRatio: '4 / 3', position: 'relative', background: 'rgba(217,142,92,0.03)' }}>
+                        <div style={{ aspectRatio: '4 / 3', position: 'relative', overflow: 'hidden', background: 'rgba(217,142,92,0.03)' }}>
                           {p ? (
                             <>
-                              <img src={p.url} alt={p.caption || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                              <span className="tg-mono" style={{ position: 'absolute', top: 4, left: 4, fontSize: 9, padding: '0.1rem 0.4rem', borderRadius: 9999, background: (p.stage || 'before') === 'after' ? 'var(--gold)' : 'var(--sage)', color: '#fff' }}>
-                                {(p.stage || 'before') === 'after' ? 'หลังทำงาน' : 'ก่อนทำงาน'}
+                              <img src={p.url} alt={p.caption || ''} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `${(photoPos[p.id] || { x: 50, y: 50 }).x}% ${(photoPos[p.id] || { x: 50, y: 50 }).y}%`, transform: `scale(${photoZoom[p.id] || 1})`, transformOrigin: `${(photoPos[p.id] || { x: 50, y: 50 }).x}% ${(photoPos[p.id] || { x: 50, y: 50 }).y}%`, display: 'block' }} />
+                              <span style={{ position: 'absolute', top: 4, left: 4, fontSize: 9, padding: '0.1rem 0.4rem', borderRadius: 4, background: 'rgba(0,0,0,0.5)', color: '#fff', fontWeight: 700 }}>
+                                {pageIdx * PHOTOS_PER_PAGE + i + 1}
                               </span>
                             </>
                           ) : (
                             <div className="flex items-center justify-center h-full text-xs" style={{ color: 'var(--moss)' }}>ช่องที่ {pageIdx * PHOTOS_PER_PAGE + i + 1}</div>
                           )}
                         </div>
-                        <p className="text-xs px-1.5 py-1 truncate" style={{ color: 'var(--bone)', minHeight: '1.5rem' }}>{p?.caption || ''}</p>
+                        <p className="text-xs px-1.5 py-1 truncate" style={{ color: 'var(--bone)', minHeight: '1.5rem' }}>{p && p.caption ? p.caption : ''}</p>
                       </div>
                     ))}
                   </div>
@@ -3578,9 +4517,11 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
               );
             })}
 
-            <div className="tg-noprint flex gap-3 mt-6">
-              <button onClick={() => setShowPhotoReport(false)} className="tg-focus tg-navbtn flex-1 px-4 py-3 rounded-xl text-sm font-medium" style={{ background: 'rgba(217,142,92,0.03)', border: '1px solid var(--line)', color: 'var(--moss)' }}>ปิด</button>
-              <button onClick={() => window.print()} className="tg-focus tg-navbtn flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium" style={{ background: 'var(--sage)', color: '#fff' }}>
+            <div className="tg-noprint flex gap-3 justify-end mt-6">
+              <button onClick={() => setShowPhotoReport(false)} className="tg-focus tg-navbtn px-5 py-3 rounded-xl text-sm font-medium" style={{ background: 'rgba(217,142,92,0.03)', border: '1px solid var(--line)', color: 'var(--moss)' }}>
+                ปิด
+              </button>
+              <button onClick={() => window.print()} className="tg-focus tg-navbtn flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-medium" style={{ background: 'var(--sage)', color: '#fff' }}>
                 <Printer size={16} strokeWidth={1.75} /> พิมพ์ / บันทึก PDF
               </button>
             </div>
