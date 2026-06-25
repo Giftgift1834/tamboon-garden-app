@@ -4625,39 +4625,46 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
               </button>
               <button
                 onClick={() => {
-                  const area = document.getElementById('tg-photo-report-pages');
-                  if (!area) return;
+                  const PER_PAGE = 8;
+                  const photos = filteredReportPhotos;
+                  if (photos.length === 0) return;
+                  const totalPages = Math.ceil(photos.length / PER_PAGE);
+                  const reportEntity = ENTITIES[photoReportEntity] || ENTITIES.entity1;
+                  const companyName = photoReportEntity === 'entity2' ? (photoReportDetails.customName || 'ระบุชื่อบริษัท') : reportEntity.name;
+                  const companyAddress = photoReportEntity === 'entity2' ? (photoReportDetails.customAddress || '') : reportEntity.address;
+                  const svgEl = document.querySelector('#tg-photo-report-pages svg');
+                  const logoHtml = svgEl ? `<div style="width:52px;height:52px;flex-shrink:0">${svgEl.outerHTML}</div>` : '';
+                  let pagesHtml = '';
+                  for (let pi = 0; pi < totalPages; pi++) {
+                    const pg = photos.slice(pi * PER_PAGE, (pi + 1) * PER_PAGE);
+                    while (pg.length < PER_PAGE) pg.push(null);
+                    const metaRows = [
+                      project?.name ? `<span style="color:#9A9E8D">โครงการ: </span><span>${project.name}</span>` : '',
+                      logDate ? `<span style="color:#9A9E8D">วันที่: </span><span style="font-family:monospace">${logDate}</span>` : '',
+                      recorder ? `<span style="color:#9A9E8D">ผู้บันทึก: </span><span>${recorder}</span>` : '',
+                      photoReportDetails.scope ? `<span style="color:#9A9E8D">ขอบเขต: </span><span>${photoReportDetails.scope}</span>` : '',
+                    ].filter(Boolean).map(r => `<p style="font-size:11px;margin-bottom:2px">${r}</p>`).join('');
+                    const cells = pg.map((p, i) => {
+                      const n = pi * PER_PAGE + i + 1;
+                      if (!p) return `<div style="border:1px dashed #ddd;border-radius:4px;overflow:hidden"><div style="height:54mm;display:flex;align-items:center;justify-content:center;font-size:10px;color:#aaa">ช่องที่ ${n}</div><p style="font-size:11px;padding:3px 6px;min-height:1.3rem"></p></div>`;
+                      const pos = (photoPos[p.id] || { x: 50, y: 50 });
+                      const zm = photoZoom[p.id] || 1;
+                      return `<div style="border:1px solid #ccc;border-radius:4px;overflow:hidden"><div style="height:54mm;position:relative;overflow:hidden"><img src="${p.url}" style="width:100%;height:100%;object-fit:cover;object-position:${pos.x}% ${pos.y}%;transform:scale(${zm});transform-origin:${pos.x}% ${pos.y}%;display:block"/><span style="position:absolute;top:4px;left:4px;font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(0,0,0,0.55);color:#fff;font-weight:700">${n}</span></div><p style="font-size:11px;padding:3px 6px;color:#444;min-height:1.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.caption || ''}</p></div>`;
+                    }).join('');
+                    pagesHtml += `<div style="${pi > 0 ? 'break-before:page;page-break-before:always;' : ''}display:flex;flex-direction:column;min-height:257mm">
+                      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:8px;margin-bottom:8px;border-bottom:2px solid #4A4F40">
+                        <div style="display:flex;align-items:flex-start;gap:10px">${logoHtml}<div><p style="font-size:12px;font-weight:700;color:#4A4F40">${companyName}</p><p style="font-size:10px;color:#9A9E8D;margin-top:2px">${companyAddress}</p></div></div>
+                        <p style="font-size:11px;font-family:monospace;color:#9A9E8D;white-space:nowrap">หน้า ${pi + 1}/${totalPages}</p>
+                      </div>
+                      <div style="text-align:center;margin-bottom:6px"><span style="display:inline-block;padding:3px 14px;border-radius:9999px;background:rgba(217,142,92,0.14);color:#D98E5C;border:1px solid rgba(217,142,92,0.25);font-weight:700;font-size:13px">${photoReportDetails.title || 'รายงานรูปถ่ายหน้างาน'}</span></div>
+                      <div style="margin-bottom:8px">${metaRows}</div>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1">${cells}</div>
+                    </div>`;
+                  }
                   const w = window.open('', '_blank', 'width=900,height=700');
-                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>รายงานภาพถ่ายหน้างาน</title>
-                  <style>
-                    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
-                    @page { size: A4; margin: 10mm 15mm; }
-                    :root {
-                      --bone:#4A4F40; --moss:#9A9E8D; --sage:#D98E5C; --sage-soft:rgba(217,142,92,0.14);
-                      --gold:#C9A227; --gold-soft:rgba(201,162,39,0.15);
-                      --line:rgba(90,100,70,0.12); --line-strong:rgba(90,100,70,0.22);
-                    }
-                    * { box-sizing: border-box; margin: 0; padding: 0; }
-                    body { font-family: 'Sarabun', sans-serif; font-size: 13px; color: var(--bone); background: #fff; }
-                    img { display: block; }
-                    .tg-noprint { display: none !important; }
-                    .tg-mono { font-family: 'Courier New', monospace; }
-                    .tg-badge { display: inline-block; padding: 4px 14px; border-radius: 9999px; font-weight: 700; border: 1px solid transparent; }
-                    .tg-badge-sage { background: var(--sage-soft); color: var(--sage); border-color: rgba(217,142,92,0.25); }
-                    .tg-doc-copy { break-before: page; page-break-before: always; margin-top: 0 !important; padding-top: 0 !important; border-top: none !important; }
-                    .flex { display: flex; } .items-start { align-items: flex-start; } .justify-between { justify-content: space-between; } .items-center { align-items: center; }
-                    .gap-1\\.5 { gap: 0.375rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
-                    .gap-x-6 { column-gap: 1.5rem; } .gap-y-1 { row-gap: 0.25rem; }
-                    .grid { display: grid; } .grid-cols-2 { grid-template-columns: repeat(2,1fr); } .col-span-2 { grid-column: span 2/span 2; }
-                    .text-right { text-align: right; } .text-center { text-align: center; } .shrink-0 { flex-shrink: 0; }
-                    .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; } .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; }
-                    .w-16 { width: 4rem; } .h-16 { height: 4rem; } .w-full { width: 100%; } .h-full { height: 100%; }
-                    .mt-1 { margin-top: 0.25rem; } .pb-4 { padding-bottom: 1rem; } .my-4 { margin: 1rem 0; } .mb-4 { margin-bottom: 1rem; }
-                    .px-1\\.5 { padding-left: 0.375rem; padding-right: 0.375rem; } .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-                    .rounded-lg { border-radius: 0.5rem; } .overflow-hidden { overflow: hidden; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-                  </style></head><body>${area.innerHTML}</body></html>`);
+                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>รายงานภาพถ่ายหน้างาน</title><style>@page{size:A4;margin:10mm 12mm}*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Sarabun',sans-serif;font-size:13px;background:#fff}img{display:block}</style></head><body>${pagesHtml}</body></html>`);
                   w.document.close();
-                  setTimeout(() => { w.focus(); w.print(); w.close(); }, 800);
+                  w.onload = () => { w.focus(); w.print(); };
                 }}
                 className="tg-focus tg-navbtn flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-medium" style={{ background: 'var(--sage)', color: '#fff' }}>
                 <Printer size={16} strokeWidth={1.75} /> พิมพ์ / บันทึก PDF
