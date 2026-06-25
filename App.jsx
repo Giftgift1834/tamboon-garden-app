@@ -1697,13 +1697,11 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
         {/* Customer info — left block aligns with item column, right block aligns with price columns */}
         <div className="tg-doc-info">
           <div className="tg-doc-left">
-            {stage === 'quotation' && (
-              <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ชื่อลูกค้า</span><span style={{ color: 'var(--bone)' }}>{project.contact}</span></div>
-            )}
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ชื่อบริษัท</span><span style={{ color: 'var(--bone)' }}>{project.customer}{showBranchSuffix && ` ${branchSuffix}`}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ที่อยู่</span><span style={{ color: 'var(--bone)' }}>{project.address}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>TaxID</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{project.taxId}</span></div>
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>โครงการ</span><span style={{ color: 'var(--bone)' }}>{doc.projectName}</span></div>
+            {project.contact && <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>ผู้ติดต่อ</span><span style={{ color: 'var(--bone)' }}>{project.contact}</span></div>}
           </div>
           <div className="tg-doc-right">
             <div className="tg-doc-row"><span style={{ color: 'var(--moss)' }}>เลขที่</span><span className="tg-mono" style={{ color: 'var(--bone)' }}>{formData.docNo}</span></div>
@@ -2387,7 +2385,11 @@ const CRMProjectExplorer = ({ onProjectsLoaded }) => {
   useEffect(() => {
     const load = () => apiFetch('/api/sheets/projects').then((data) => {
       if (data && data.length > 0) {
-        setProjects([blank, ...data]);
+        setProjects((prev) => {
+          // preserve any unsaved new projects the user is currently editing
+          const unsaved = prev.filter((p) => p.id !== blank.id && p.id.startsWith('PRJ-NEW'));
+          return [blank, ...data, ...unsaved];
+        });
         if (onProjectsLoaded) onProjectsLoaded(data);
       }
     }).catch(() => {});
@@ -2730,7 +2732,9 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [
 
   const projectDocs = documents.filter((d) => d.projectId === selectedProjectId);
   const doc = projectDocs.find((d) => d.id === selectedDocId) || projectDocs[0];
-  const project = projectsData.find((p) => p.id === selectedProjectId);
+  const liveProjectsList = sheetsProjects.length > 0 ? sheetsProjects : projectsData;
+  const project = liveProjectsList.find((p) => p.id === selectedProjectId)
+    || { id: selectedProjectId, name: '', customer: '', contact: '', taxId: '', address: '', entity: 'entity1', value: 0 };
   const formKey = doc ? `${doc.id}__${viewStage}` : null;
   const form = (formKey && formStates[formKey]) || { lineItems: [], docNo: '', docDate: '', validity: '', rev: '', dueDate: '', qtRef: '', invRef: '', payMethod: '', charges: { ...DEFAULT_CHARGES }, note: '', poRef: '', poDate: '', branchType: 'hq', branchName: '', checkBank: '', checkNo: '', checkDate: '' };
   const isPaid = doc ? !!doc.paidAt : false;
@@ -2772,14 +2776,17 @@ const DocumentFlow = ({ paidDocIds, togglePaid, onDocsLoaded, sheetsProjects = [
         currentStage: viewStage,
       };
       try {
+        let finalDoc = updatedDoc;
         if (doc.id.startsWith('DOC-NEW')) {
           const newId = `DOC-${Date.now()}`;
-          await apiFetch('/api/sheets/documents', 'POST', { ...updatedDoc, id: newId });
-          setDocuments((prev) => prev.map((d) => d.id === doc.id ? { ...updatedDoc, id: newId } : d));
+          finalDoc = { ...updatedDoc, id: newId };
+          await apiFetch('/api/sheets/documents', 'POST', finalDoc);
         } else {
           await apiFetch('/api/sheets/documents', 'PUT', updatedDoc);
-          setDocuments((prev) => prev.map((d) => d.id === doc.id ? updatedDoc : d));
         }
+        const newDocuments = documents.map((d) => d.id === doc.id ? finalDoc : d);
+        setDocuments(newDocuments);
+        if (onDocsLoaded) onDocsLoaded(newDocuments);
       } catch (e) {
         console.warn('Document save failed:', e.message);
       }
