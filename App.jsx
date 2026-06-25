@@ -1870,6 +1870,7 @@ const DocumentPreview = ({ doc, project, formData, amounts, stage, copyLabel, on
               const area = document.querySelector('.tg-print-area');
               if (!area) { window.print(); return; }
               const w = window.open('', '_blank', 'width=900,height=700');
+              if (!w) { alert('กรุณาอนุญาต Popup ในเบราว์เซอร์ก่อนกดพิมพ์'); return; }
               w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>เอกสาร</title>
               <style>
                 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
@@ -3334,6 +3335,7 @@ const DocumentFlow = ({ paidDocIds, togglePaid }) => {
                     pagesHtml += `<div style="${pi > 0 ? 'break-before:page;page-break-before:always;' : ''}"><div style="border-bottom:1.5px solid #333;padding-bottom:8px;margin-bottom:12px;font-size:12px;display:flex;justify-content:space-between;align-items:center"><strong>ภาพถ่ายหน้างาน</strong><span>หน้า ${pi + 1}/${totalPages}</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${cells}</div></div>`;
                   }
                   const w = window.open('', '_blank', 'width=900,height=700');
+                  if (!w) { alert('กรุณาอนุญาต Popup ในเบราว์เซอร์ก่อนกดพิมพ์'); return; }
                   w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>ภาพถ่ายหน้างาน_${docNo}</title><style>@page{size:A4;margin:10mm}html,body{height:auto}*{box-sizing:border-box;margin:0;padding:0}body{font-family:sans-serif;background:#fff}</style></head><body>${pagesHtml}</body></html>`);
                   w.document.close();
                   w.onload = () => { w.focus(); w.print(); };
@@ -4262,6 +4264,7 @@ const HREmployeeCard = () => {
                   const area = document.getElementById('tg-payroll-pdf-content');
                   if (!area) { window.print(); return; }
                   const w = window.open('', '_blank', 'width=900,height=700');
+                  if (!w) { alert('กรุณาอนุญาต Popup ในเบราว์เซอร์ก่อนกดพิมพ์'); return; }
                   w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>สรุปจ่ายเงินเดือน</title>
                   <style>
                     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
@@ -4775,6 +4778,7 @@ const SiteLogCosting = ({ setProjectDirectCost, setPage }) => {
                     </div>`;
                   }
                   const w = window.open('', '_blank', 'width=900,height=700');
+                  if (!w) { alert('กรุณาอนุญาต Popup ในเบราว์เซอร์ก่อนกดพิมพ์'); return; }
                   w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>รายงานภาพถ่ายหน้างาน</title><style>@page{size:A4;margin:10mm 12mm}*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Sarabun',sans-serif;font-size:13px;background:#fff}img{display:block}</style></head><body>${pagesHtml}</body></html>`);
                   w.document.close();
                   w.onload = () => { w.focus(); w.print(); };
